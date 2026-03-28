@@ -1,0 +1,3233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHIEF SOSA — GLORY BOYZ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap');
+
+  :root {
+    --purple-deep: #7B2FBE;
+    --purple-mid: #9B3FDF;
+    --purple-bright: #C44DFF;
+    --green-toxic: #00FF41;
+    --green-dim: #00cc34;
+    --black-deep: #060408;
+    --black-mid: #0e0b12;
+    --black-light: #151018;
+    --white: #f0f0f0;
+    --gray: #666;
+    --gray-light: #999;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple-deep) var(--black-deep);
+  }
+
+  body {
+    background: var(--black-deep);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    overflow: hidden;
+    cursor: default;
+    height: 100vh;
+  }
+
+  /* ===== SPA Page System ===== */
+  .page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: scale(0.97);
+    z-index: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple-deep) var(--black-deep);
+  }
+
+  .page::-webkit-scrollbar { width: 6px; }
+  .page::-webkit-scrollbar-track { background: var(--black-deep); }
+  .page::-webkit-scrollbar-thumb { background: var(--purple-deep); border-radius: 3px; }
+
+  .page.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: scale(1);
+    z-index: 2;
+  }
+
+  .page--hero {
+    overflow: hidden;
+  }
+
+  .page:not(.page--hero) {
+    background: var(--black-deep);
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--black-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--purple-deep); border-radius: 3px; }
+
+  /* Grain Overlay */
+  .grain {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.12;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    animation: grainShift 0.5s steps(1) infinite;
+  }
+
+  @keyframes grainShift {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-5%, -5%); }
+    50% { transform: translate(5%, 5%); }
+    75% { transform: translate(-2%, 3%); }
+    100% { transform: translate(3%, -2%); }
+  }
+
+  /* Navigation — 4 corners layout */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    mix-blend-mode: difference;
+  }
+
+  .nav.visible {
+    opacity: 1;
+  }
+
+  .nav-wordmark {
+    position: fixed;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 36px;
+    color: var(--white);
+    letter-spacing: 4px;
+    text-decoration: none;
+    transition: color 0.3s, opacity 0.3s;
+    pointer-events: all;
+    z-index: 1001;
+  }
+
+  .nav-wordmark:hover { color: var(--purple-bright); }
+
+  .nav-corner {
+    position: fixed;
+    pointer-events: all;
+    z-index: 1001;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    padding: 2px;
+  }
+
+  .nav-corner a, .nav-corner button {
+    color: var(--white);
+    text-decoration: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    transition: color 0.3s, text-shadow 0.3s, background 0.3s;
+    position: relative;
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+
+  .nav-corner a::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    height: 1px;
+    background: var(--purple-bright);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+
+  .nav-corner a:hover, .nav-corner a.active {
+    color: var(--purple-bright);
+    text-shadow: 0 0 20px rgba(196, 77, 255, 0.3);
+    background: rgba(196, 77, 255, 0.06);
+  }
+  .nav-corner a:hover::after, .nav-corner a.active::after { transform: scaleX(1); }
+
+  .nav-corner--tl { top: 32px; left: 32px; transition: top 0.4s ease-out, left 0.4s ease-out, opacity 0.4s ease; }
+  .nav-corner--tr { top: 32px; right: 32px; transition: top 0.4s ease-out, right 0.4s ease-out, opacity 0.4s ease; }
+  .nav-corner--bl { bottom: 32px; left: 32px; transition: bottom 0.4s ease-out, left 0.4s ease-out, opacity 0.4s ease; }
+  .nav-corner--br { bottom: 32px; right: 32px; transition: bottom 0.4s ease-out, right 0.4s ease-out, opacity 0.4s ease; }
+
+  .nav-corner.hidden-nav { opacity: 0; pointer-events: none; }
+  .nav-wordmark.hidden-nav { opacity: 0; pointer-events: none; }
+
+  .nav-links {
+    display: none;
+  }
+
+  .audio-toggle {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 8px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    pointer-events: all;
+  }
+
+  .audio-toggle:hover {
+    border-color: var(--green-toxic);
+    color: var(--green-toxic);
+  }
+
+  .audio-toggle.active {
+    border-color: var(--green-toxic);
+    color: var(--green-toxic);
+    box-shadow: 0 0 12px rgba(0, 255, 65, 0.2);
+  }
+
+  /* Audio bar at bottom center of hero */
+  .hero-audio-bar {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    z-index: 10;
+    cursor: pointer;
+    padding: 10px 16px;
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  .hero-audio-bar .bar {
+    width: 1.5px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 1px;
+    transition: background 0.4s, height 0.4s ease;
+    transform-origin: center center;
+  }
+
+  .hero-audio-bar .bar:nth-child(1) { height: 4px; }
+  .hero-audio-bar .bar:nth-child(2) { height: 8px; }
+  .hero-audio-bar .bar:nth-child(3) { height: 12px; }
+  .hero-audio-bar .bar:nth-child(4) { height: 6px; }
+  .hero-audio-bar .bar:nth-child(5) { height: 14px; }
+  .hero-audio-bar .bar:nth-child(6) { height: 10px; }
+  .hero-audio-bar .bar:nth-child(7) { height: 16px; }
+  .hero-audio-bar .bar:nth-child(8) { height: 8px; }
+  .hero-audio-bar .bar:nth-child(9) { height: 12px; }
+  .hero-audio-bar .bar:nth-child(10) { height: 6px; }
+  .hero-audio-bar .bar:nth-child(11) { height: 10px; }
+  .hero-audio-bar .bar:nth-child(12) { height: 4px; }
+
+  .hero-audio-bar.active .bar {
+    background: rgba(255,255,255,0.35);
+    animation: waveBar 0.6s ease-in-out infinite alternate;
+  }
+
+  .hero-audio-bar.active .bar:nth-child(1) { animation-delay: 0s; }
+  .hero-audio-bar.active .bar:nth-child(2) { animation-delay: 0.08s; }
+  .hero-audio-bar.active .bar:nth-child(3) { animation-delay: 0.16s; }
+  .hero-audio-bar.active .bar:nth-child(4) { animation-delay: 0.24s; }
+  .hero-audio-bar.active .bar:nth-child(5) { animation-delay: 0.05s; }
+  .hero-audio-bar.active .bar:nth-child(6) { animation-delay: 0.13s; }
+  .hero-audio-bar.active .bar:nth-child(7) { animation-delay: 0.21s; }
+  .hero-audio-bar.active .bar:nth-child(8) { animation-delay: 0.1s; }
+  .hero-audio-bar.active .bar:nth-child(9) { animation-delay: 0.18s; }
+  .hero-audio-bar.active .bar:nth-child(10) { animation-delay: 0.03s; }
+  .hero-audio-bar.active .bar:nth-child(11) { animation-delay: 0.15s; }
+  .hero-audio-bar.active .bar:nth-child(12) { animation-delay: 0.07s; }
+
+  @keyframes waveBar {
+    0% { transform: scaleY(0.3); }
+    100% { transform: scaleY(1.2); }
+  }
+
+  /* Hamburger */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 1100;
+    background: none;
+    border: none;
+    position: fixed;
+    top: 36px;
+    right: 40px;
+    pointer-events: all;
+  }
+
+  .hamburger span {
+    width: 28px;
+    height: 2px;
+    background: var(--white);
+    transition: all 0.3s;
+  }
+
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  .mobile-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10,10,10,0.97);
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+  }
+
+  .mobile-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .mobile-overlay a {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 36px;
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .mobile-overlay a:hover { color: var(--purple-bright); }
+
+  /* Hero Section */
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cracked-earth {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    animation: crackFadeIn 2s ease 1.5s forwards;
+  }
+
+  @keyframes crackFadeIn {
+    to { opacity: 0.45; }
+  }
+
+  .hero-fog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle,
+      rgba(90, 30, 130, 0.2) 0%,
+      rgba(60, 15, 95, 0.12) 30%,
+      rgba(0, 15, 5, 0.06) 55%,
+      transparent 75%);
+    pointer-events: none;
+    animation: fogPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes fogPulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  .hero-god-rays {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: conic-gradient(from 0deg,
+      transparent 0deg,
+      rgba(90,25,140,0.06) 15deg,
+      transparent 30deg,
+      rgba(80,20,120,0.04) 55deg,
+      transparent 75deg,
+      rgba(90,25,140,0.05) 100deg,
+      transparent 120deg,
+      rgba(20,40,20,0.03) 145deg,
+      transparent 165deg,
+      rgba(90,25,140,0.06) 190deg,
+      transparent 210deg,
+      rgba(80,20,120,0.04) 240deg,
+      transparent 260deg,
+      rgba(20,40,20,0.03) 285deg,
+      transparent 310deg,
+      rgba(90,25,140,0.05) 340deg,
+      transparent 360deg);
+    pointer-events: none;
+    animation: raysSpin 45s linear infinite;
+    mask-image: radial-gradient(ellipse 50% 50% at center, black 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 50% 50% at center, black 0%, transparent 70%);
+  }
+
+  @keyframes raysSpin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* (scroll indicator, hero-bottom, hero-ticks removed — replaced by corner nav + audio bar) */
+
+  /* Section Styles */
+  .section {
+    position: relative;
+    padding: 120px 40px;
+    min-height: 100vh;
+  }
+
+  /* Back button removed — corners are persistent nav */
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: clamp(48px, 8vw, 96px);
+    color: var(--white);
+    margin-bottom: 60px;
+    line-height: 1.1;
+  }
+
+  .section-title .accent {
+    color: var(--purple-bright);
+  }
+
+  /* Music Feed */
+  .music-feed {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2px;
+  }
+
+  .music-card {
+    position: relative;
+    background: var(--black-mid);
+    overflow: hidden;
+    cursor: pointer;
+    aspect-ratio: 16/10;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .music-card:hover { transform: scale(0.98); }
+
+  .music-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+    transition: opacity 0.5s, transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .music-card:hover .music-card-image {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+
+  .music-card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    background: linear-gradient(to top, rgba(10,10,10,0.9), transparent);
+  }
+
+  .music-card-tag {
+    display: inline-block;
+    font-size: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green-toxic);
+    margin-bottom: 8px;
+    padding: 3px 8px;
+    border: 1px solid rgba(0,255,65,0.3);
+  }
+
+  .music-card-title {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 24px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .music-card-sub {
+    font-size: 10px;
+    color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  .music-card-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--purple-bright);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .music-card:hover .music-card-play { transform: translate(-50%, -50%) scale(1); }
+
+  .music-card-play::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 16px solid var(--purple-bright);
+    margin-left: 4px;
+  }
+
+  /* Shop */
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .product-card {
+    background: var(--black-mid);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.01) 2px,
+      rgba(255,255,255,0.01) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .product-card:hover {
+    transform: translateY(-12px) rotate(-0.5deg);
+    box-shadow: 0 30px 60px rgba(123,47,190,0.15), 0 0 0 1px rgba(196,77,255,0.1);
+  }
+
+  .product-image {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--black-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-image .skull-icon {
+    font-size: 64px;
+    opacity: 0.3;
+    transition: opacity 0.3s, transform 0.5s;
+  }
+
+  .product-card:hover .skull-icon {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+
+  .product-sold-out {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: rgba(255,0,0,0.8);
+    padding: 4px 8px;
+    color: white;
+    z-index: 2;
+  }
+
+  .product-info {
+    padding: 20px;
+  }
+
+  .product-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .product-desc {
+    font-size: 11px;
+    color: var(--gray);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .product-price {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    color: var(--purple-bright);
+    font-weight: 700;
+  }
+
+  .product-price .old {
+    color: var(--gray);
+    text-decoration: line-through;
+    font-size: 12px;
+    margin-left: 8px;
+    font-weight: 400;
+  }
+
+  .add-to-cart {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 16px;
+  }
+
+  .add-to-cart:hover {
+    background: var(--purple-deep);
+    border-color: var(--purple-deep);
+  }
+
+  /* Tour */
+  .tour-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .tour-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 200px 120px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    align-items: center;
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+
+  .tour-row:hover {
+    background: rgba(123,47,190,0.05);
+  }
+
+  .tour-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--purple-bright);
+    font-weight: 700;
+  }
+
+  .tour-venue {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .tour-venue .city {
+    display: block;
+    font-size: 11px;
+    color: var(--gray);
+    font-weight: 400;
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+
+  .tour-status {
+    text-align: right;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .tour-status.available { color: var(--green-toxic); }
+  .tour-status.sold-out { color: #ff3333; }
+  .tour-status.low { color: #ffaa00; }
+
+  .tour-btn {
+    text-align: right;
+  }
+
+  .tour-btn a {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--white);
+    text-decoration: none;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+
+  .tour-btn a:hover {
+    border-color: var(--purple-bright);
+    color: var(--purple-bright);
+  }
+
+  /* Vault */
+  .vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    perspective: 1200px;
+  }
+
+  .vault-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    background: var(--black-mid);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-style: preserve-3d;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .vault-card:hover {
+    transform: rotateY(-5deg) rotateX(3deg) scale(1.02);
+    box-shadow: 10px 10px 40px rgba(123,47,190,0.2);
+  }
+
+  .vault-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+    transition: opacity 0.5s;
+  }
+
+  .vault-card:hover .vault-card-img { opacity: 0.4; }
+
+  .vault-card-label {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+  }
+
+  .vault-card-era {
+    font-size: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--purple-bright);
+    margin-bottom: 4px;
+  }
+
+  .vault-card-name {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 20px;
+  }
+
+  /* Vault Gate */
+  .vault-gate {
+    position: relative;
+    min-height: 70vh;
+  }
+
+  .vault-gate-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg,
+      rgba(10,10,10,0.6) 0%,
+      rgba(10,10,10,0.97) 35%,
+      rgba(10,10,10,0.99) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  .vault-gate-overlay.unlocked {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .vault-lock-icon {
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(123,47,190,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    position: relative;
+    animation: lockPulse 3s ease-in-out infinite;
+  }
+
+  .vault-lock-icon::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid rgba(196,77,255,0.15);
+    animation: lockRing 3s ease-in-out infinite;
+  }
+
+  @keyframes lockPulse {
+    0%, 100% { border-color: rgba(123,47,190,0.4); box-shadow: 0 0 30px rgba(123,47,190,0.1); }
+    50% { border-color: rgba(196,77,255,0.6); box-shadow: 0 0 50px rgba(123,47,190,0.2); }
+  }
+
+  @keyframes lockRing {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0; }
+  }
+
+  .vault-lock-svg {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: var(--purple-bright);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .vault-gate-title {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--white);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .vault-gate-sub {
+    font-size: 11px;
+    color: var(--gray-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    text-align: center;
+    max-width: 420px;
+    line-height: 1.8;
+  }
+
+  .vault-gate-sub .sol-accent {
+    color: var(--purple-bright);
+    font-weight: 700;
+  }
+
+  .wallet-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .wallet-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wallet-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(123,47,190,0.1), transparent);
+    transition: left 0.6s;
+  }
+
+  .wallet-btn:hover {
+    border-color: var(--purple-mid);
+    transform: translateX(4px);
+    background: rgba(123,47,190,0.08);
+  }
+
+  .wallet-btn:hover::before {
+    left: 100%;
+  }
+
+  .wallet-btn-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .wallet-btn-icon.phantom {
+    background: linear-gradient(135deg, #ab9ff2, #7c3aed);
+  }
+
+  .wallet-btn-icon.solflare {
+    background: linear-gradient(135deg, #fc8c1c, #f44);
+  }
+
+  .wallet-btn-icon.backpack {
+    background: linear-gradient(135deg, #e33, #c22);
+  }
+
+  .wallet-btn-icon.generic {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .wallet-btn .wallet-status {
+    margin-left: auto;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--gray);
+    text-transform: uppercase;
+  }
+
+  .wallet-btn .wallet-status.detected {
+    color: var(--green-toxic);
+  }
+
+  .wallet-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 320px;
+    margin: 4px 0;
+  }
+
+  .wallet-divider::before,
+  .wallet-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .wallet-divider span {
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--gray);
+    text-transform: uppercase;
+  }
+
+  .vault-gate-note {
+    margin-top: 32px;
+    font-size: 9px;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 1px;
+    text-align: center;
+    line-height: 1.8;
+    max-width: 360px;
+  }
+
+  .vault-gate-note a {
+    color: var(--purple-mid);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .vault-gate-note a:hover {
+    color: var(--purple-bright);
+  }
+
+  /* Connected state badge */
+  .vault-connected-badge {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(0, 255, 65, 0.06);
+    border: 1px solid rgba(0, 255, 65, 0.15);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--green-toxic);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .vault-connected-badge.show {
+    display: flex;
+  }
+
+  .vault-connected-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-toxic);
+    animation: dotBlink 2s ease-in-out infinite;
+  }
+
+  @keyframes dotBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .vault-disconnect-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--gray);
+    padding: 4px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    margin-left: 8px;
+  }
+
+  .vault-disconnect-btn:hover {
+    border-color: #ff3333;
+    color: #ff3333;
+  }
+
+  /* Vault content blur when locked */
+  .vault-grid.locked {
+    filter: blur(12px) saturate(0.3);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.4;
+  }
+
+  .vault-grid.unlocked {
+    filter: none;
+    pointer-events: all;
+    opacity: 1;
+    transition: filter 1s ease, opacity 1s ease;
+  }
+
+  /* Footer Drawer Toggle */
+  .footer-toggle {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: transparent;
+    color: rgba(255,255,255,0.2);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    line-height: 1;
+  }
+
+  .footer-toggle:hover {
+    border-color: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.45);
+  }
+
+  .footer-toggle.active {
+    transform: translateX(-50%) rotate(45deg);
+    border-color: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* Footer Drawer */
+  .footer-drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: rgba(8,8,8,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 0 40px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .footer-drawer.open {
+    max-height: 220px;
+    padding: 30px 40px 60px;
+  }
+
+  .footer-drawer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
+  }
+
+  .footer-drawer.open .footer-drawer-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .footer-drawer-socials {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-drawer-socials a {
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    transition: color 0.3s, transform 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-drawer-socials a svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .footer-drawer-socials a:hover {
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  .footer-drawer-legal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-drawer-legal-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-drawer-legal-links a {
+    color: rgba(255,255,255,0.2);
+    text-decoration: none;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .footer-drawer-legal-links a:hover {
+    color: rgba(255,255,255,0.5);
+  }
+
+  .footer-drawer-copy {
+    font-size: 9px;
+    color: rgba(255,255,255,0.12);
+    letter-spacing: 1px;
+  }
+
+  /* Animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .stagger { transition-delay: var(--delay, 0s); }
+
+  /* Divider */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(123,47,190,0.3), transparent);
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-corner {
+      display: block;
+    }
+    .nav-corner a {
+      font-size: 8px;
+      letter-spacing: 2px;
+      padding: 4px 6px;
+    }
+    .nav-corner--tl { top: 20px; left: 16px; }
+    .nav-corner--tr { top: 20px; right: 16px; }
+    .nav-corner--bl { bottom: 20px; left: 16px; }
+    .nav-corner--br { bottom: 20px; right: 16px; }
+    .hamburger { display: none; }
+
+    .nav-wordmark {
+      font-size: 28px;
+      top: 28px;
+    }
+
+    .hero-audio-bar {
+      bottom: 60px;
+    }
+
+    .section { padding: 80px 20px; }
+    .section-title { font-size: 36px; }
+
+    .music-feed { grid-template-columns: 1fr; }
+    .shop-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .vault-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .tour-row {
+      grid-template-columns: 80px 1fr 80px;
+      font-size: 12px;
+      padding: 16px 0;
+    }
+
+    .tour-btn { display: none; }
+
+    .footer-drawer.open {
+      max-height: 240px;
+      padding: 24px 20px 60px;
+    }
+
+    .footer-drawer-socials {
+      gap: 20px;
+    }
+
+    .footer-drawer-socials a svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .hero-audio-bar { bottom: 50px; }
+  }
+
+  @media (max-width: 480px) {
+    .shop-grid { grid-template-columns: 1fr; }
+    .vault-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Canvas for 3D skull cluster */
+  #skull-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Loading screen */
+  .loader {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--black-deep);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  .loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .loader-title-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .loader-title-base,
+  .loader-title-fill {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: clamp(64px, 12vw, 120px);
+    letter-spacing: 6px;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .loader-title-base {
+    color: rgba(255, 255, 255, 0.08);
+  }
+
+  .loader-title-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--purple-bright);
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.25s ease-out;
+    filter: drop-shadow(0 0 20px rgba(155, 63, 223, 0.4));
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div class="loader" id="loader">
+  <div class="loader-title-wrap">
+    <div class="loader-title-base">SOSA</div>
+    <div class="loader-title-fill" id="loader-fill">SOSA</div>
+  </div>
+</div>
+
+<!-- Grain Overlay -->
+<div class="grain"></div>
+
+<!-- Mobile Overlay -->
+<div class="mobile-overlay" id="mobileOverlay">
+  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('music')">Music</a>
+  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('shop')">Shop</a>
+  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('tour')">Tour</a>
+  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('vault')">Vault</a>
+</div>
+
+
+
+<!-- Navigation — 4 corners + centered wordmark -->
+<nav class="nav" id="mainNav">
+  <a href="javascript:void(0)" class="nav-wordmark" onclick="navigateTo('home')">Sosa</a>
+  <div class="nav-corner nav-corner--tl"><a href="javascript:void(0)" onclick="navigateTo('music')">Music</a></div>
+  <div class="nav-corner nav-corner--tr"><a href="javascript:void(0)" onclick="navigateTo('shop')">Shop</a></div>
+  <div class="nav-corner nav-corner--bl"><a href="javascript:void(0)" onclick="navigateTo('tour')">Tour</a></div>
+  <div class="nav-corner nav-corner--br"><a href="javascript:void(0)" onclick="navigateTo('vault')">Vault</a></div>
+  <button class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ===== PAGE: HOME ===== -->
+<div class="page page--hero active" id="page-home">
+<section class="hero" id="hero">
+  <canvas id="skull-canvas"></canvas>
+  <canvas id="cracked-earth-canvas" class="cracked-earth"></canvas>
+  <div class="hero-fog"></div>
+  <div class="hero-god-rays"></div>
+
+  <!-- Audio waveform toggle at bottom center -->
+  <div class="hero-audio-bar" id="heroAudioBar" onclick="toggleAudioFromHero()">
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  </div>
+</section>
+</div><!-- /page-home -->
+
+<!-- ===== PAGE: MUSIC ===== -->
+<div class="page" id="page-music">
+<section class="section" id="music">
+  <div class="reveal">
+    <div class="section-label">Latest Drops</div>
+    <h2 class="section-title">New <span class="accent">Music</span></h2>
+  </div>
+  <div class="music-feed">
+    <div class="music-card reveal" style="--delay: 0.1s">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a0a2e 0%, #3d1a78 50%, #1a0a2e 100%);" class="music-card-image"></div>
+      <div class="music-card-play"></div>
+      <div class="music-card-content">
+        <span class="music-card-tag">New Single</span>
+        <div class="music-card-title">Hadouken</div>
+        <div class="music-card-sub">Official Music Video — Jan 2026</div>
+      </div>
+    </div>
+    <div class="music-card reveal" style="--delay: 0.2s">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg, #0a0a0a 0%, #2d0a4e 50%, #0a0a0a 100%);" class="music-card-image"></div>
+      <div class="music-card-play"></div>
+      <div class="music-card-content">
+        <span class="music-card-tag">Album</span>
+        <div class="music-card-title">Almighty So 2</div>
+        <div class="music-card-sub">Full Length — Streaming Now</div>
+      </div>
+    </div>
+    <div class="music-card reveal" style="--delay: 0.3s">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg, #0d1a0d 0%, #1a3d1a 50%, #0d1a0d 100%);" class="music-card-image"></div>
+      <div class="music-card-play"></div>
+      <div class="music-card-content">
+        <span class="music-card-tag">Video</span>
+        <div class="music-card-title">Racks Gone</div>
+        <div class="music-card-sub">Directed by Cole Bennett — Dec 2025</div>
+      </div>
+    </div>
+    <div class="music-card reveal" style="--delay: 0.4s">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a0a0a 0%, #4a1a1a 50%, #1a0a0a 100%);" class="music-card-image"></div>
+      <div class="music-card-play"></div>
+      <div class="music-card-content">
+        <span class="music-card-tag">Feature</span>
+        <div class="music-card-title">OBlock 4Ever</div>
+        <div class="music-card-sub">ft. Lil Durk — Nov 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-music -->
+
+<!-- ===== PAGE: SHOP ===== -->
+<div class="page" id="page-shop">
+<section class="section" id="shop">
+  <div class="reveal">
+    <div class="section-label">Official Merch</div>
+    <h2 class="section-title">Glory <span class="accent">Shop</span></h2>
+  </div>
+  <div class="shop-grid">
+    <div class="product-card reveal" style="--delay: 0.1s">
+      <div class="product-image">
+        <div class="skull-icon">💀</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">SKELETOR SKULL HOODIE</div>
+        <div class="product-desc">Heavyweight 400gsm French terry. Oversized fit. Purple stone-washed with skull embroidery.</div>
+        <div class="product-price">$185</div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card reveal" style="--delay: 0.2s">
+      <div class="product-image">
+        <div class="skull-icon">🔮</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">ALMIGHTY SO CRYSTAL TEE</div>
+        <div class="product-desc">Vintage distressed wash. Graphic crystal front print. Back script.</div>
+        <div class="product-price">$65</div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card reveal" style="--delay: 0.3s">
+      <div class="product-image">
+        <div class="skull-icon">⛓️</div>
+        <div class="product-sold-out">SOLD OUT</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">GBE CHAIN PENDANT</div>
+        <div class="product-desc">Sterling silver 925 with purple amethyst inlay. 24" Cuban link.</div>
+        <div class="product-price">$420 <span class="old">$520</span></div>
+        <button class="add-to-cart" style="opacity:0.3; pointer-events:none;">Sold Out</button>
+      </div>
+    </div>
+    <div class="product-card reveal" style="--delay: 0.4s">
+      <div class="product-image">
+        <div class="skull-icon">🧢</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">GLORY FITTED CAP</div>
+        <div class="product-desc">New Era collab. Blackletter embroidery. Purple underbrim.</div>
+        <div class="product-price">$55</div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-shop -->
+
+<!-- ===== PAGE: TOUR ===== -->
+<div class="page" id="page-tour">
+<section class="section" id="tour">
+  <div class="reveal">
+    <div class="section-label">Live Shows</div>
+    <h2 class="section-title">Tour <span class="accent">Dates</span></h2>
+  </div>
+  <div class="tour-table reveal">
+    <div class="tour-row">
+      <div class="tour-date">MAR 14</div>
+      <div class="tour-venue">United Center <span class="city">Chicago, IL</span></div>
+      <div class="tour-status available">● Available</div>
+      <div class="tour-btn"><a href="#">Tickets</a></div>
+    </div>
+    <div class="tour-row">
+      <div class="tour-date">MAR 22</div>
+      <div class="tour-venue">Madison Square Garden <span class="city">New York, NY</span></div>
+      <div class="tour-status low">● Low Stock</div>
+      <div class="tour-btn"><a href="#">Tickets</a></div>
+    </div>
+    <div class="tour-row">
+      <div class="tour-date">APR 05</div>
+      <div class="tour-venue">The Forum <span class="city">Los Angeles, CA</span></div>
+      <div class="tour-status available">● Available</div>
+      <div class="tour-btn"><a href="#">Tickets</a></div>
+    </div>
+    <div class="tour-row">
+      <div class="tour-date">APR 12</div>
+      <div class="tour-venue">Toyota Center <span class="city">Houston, TX</span></div>
+      <div class="tour-status sold-out">● Sold Out</div>
+      <div class="tour-btn"><a href="#" style="opacity:0.3;pointer-events:none;">Sold Out</a></div>
+    </div>
+    <div class="tour-row">
+      <div class="tour-date">APR 19</div>
+      <div class="tour-venue">State Farm Arena <span class="city">Atlanta, GA</span></div>
+      <div class="tour-status available">● Available</div>
+      <div class="tour-btn"><a href="#">Tickets</a></div>
+    </div>
+    <div class="tour-row">
+      <div class="tour-date">MAY 03</div>
+      <div class="tour-venue">Wembley Arena <span class="city">London, UK</span></div>
+      <div class="tour-status available">● Available</div>
+      <div class="tour-btn"><a href="#">Tickets</a></div>
+    </div>
+    <div class="tour-row">
+      <div class="tour-date">MAY 10</div>
+      <div class="tour-venue">Accor Arena <span class="city">Paris, FR</span></div>
+      <div class="tour-status low">● Low Stock</div>
+      <div class="tour-btn"><a href="#">Tickets</a></div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-tour -->
+
+<!-- ===== PAGE: VAULT ===== -->
+<div class="page" id="page-vault">
+<section class="section" id="vault">
+  <div class="reveal">
+    <div class="section-label">The Archive</div>
+    <h2 class="section-title">The <span class="accent">Vault</span></h2>
+    <div class="vault-connected-badge" id="vaultBadge">
+      <div class="vault-connected-dot"></div>
+      <span id="walletAddr">—</span>
+      <button class="vault-disconnect-btn" onclick="disconnectWallet()">Disconnect</button>
+    </div>
+  </div>
+  <div class="vault-gate">
+    <div class="vault-gate-overlay" id="vaultGate">
+      <div class="vault-lock-icon">
+        <svg class="vault-lock-svg" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <circle cx="12" cy="16" r="1.5" fill="var(--purple-bright)"/>
+        </svg>
+      </div>
+      <div class="vault-gate-title">Holders Only</div>
+      <div class="vault-gate-sub">
+        Connect your <span class="sol-accent">Solana</span> wallet to unlock the vault — exclusive era photography, unreleased mixtape covers, and archive material
+      </div>
+      <div class="wallet-buttons">
+        <button class="wallet-btn" onclick="connectWallet('phantom')" id="btnPhantom">
+          <div class="wallet-btn-icon phantom">👻</div>
+          Phantom
+          <span class="wallet-status" id="statusPhantom">—</span>
+        </button>
+        <button class="wallet-btn" onclick="connectWallet('solflare')" id="btnSolflare">
+          <div class="wallet-btn-icon solflare">☀</div>
+          Solflare
+          <span class="wallet-status" id="statusSolflare">—</span>
+        </button>
+        <button class="wallet-btn" onclick="connectWallet('backpack')" id="btnBackpack">
+          <div class="wallet-btn-icon backpack">🎒</div>
+          Backpack
+          <span class="wallet-status" id="statusBackpack">—</span>
+        </button>
+        <div class="wallet-divider"><span>or</span></div>
+        <button class="wallet-btn" onclick="connectWallet('any')" id="btnAny">
+          <div class="wallet-btn-icon generic">🔗</div>
+          Any Solana Wallet
+          <span class="wallet-status">—</span>
+        </button>
+      </div>
+      <div class="vault-gate-note">
+        Requires any Solana wallet. Token-gating optional.<br>
+        <a href="javascript:void(0)" onclick="bypassVault()">Demo access →</a>
+      </div>
+    </div>
+    <div class="vault-grid locked" id="vaultGrid">
+    <div class="vault-card reveal" style="--delay: 0.05s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #2a0a4a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2012</div>
+        <div class="vault-card-name">Finally Rich</div>
+      </div>
+    </div>
+    <div class="vault-card reveal" style="--delay: 0.1s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #1a1a3a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2013</div>
+        <div class="vault-card-name">Almighty So</div>
+      </div>
+    </div>
+    <div class="vault-card reveal" style="--delay: 0.15s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a2a0a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2013</div>
+        <div class="vault-card-name">Bang Pt. 2</div>
+      </div>
+    </div>
+    <div class="vault-card reveal" style="--delay: 0.2s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #3a1a0a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2014</div>
+        <div class="vault-card-name">Back From The Dead 2</div>
+      </div>
+    </div>
+    <div class="vault-card reveal" style="--delay: 0.25s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #1a0a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2015</div>
+        <div class="vault-card-name">Sorry 4 The Weight</div>
+      </div>
+    </div>
+    <div class="vault-card reveal" style="--delay: 0.3s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a0a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2017</div>
+        <div class="vault-card-name">Two Zero One Seven</div>
+      </div>
+    </div>
+    <div class="vault-card reveal" style="--delay: 0.35s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #2a0a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2019</div>
+        <div class="vault-card-name">Glotoven</div>
+      </div>
+    </div>
+    <div class="vault-card reveal" style="--delay: 0.4s">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a1a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
+      <div class="vault-card-label">
+        <div class="vault-card-era">2024</div>
+        <div class="vault-card-name">Almighty So 2</div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+</div><!-- /page-vault -->
+
+<!-- Footer Drawer -->
+<div class="footer-drawer" id="footerDrawer">
+  <div class="footer-drawer-inner">
+    <ul class="footer-drawer-socials">
+      <li><a href="#" aria-label="Spotify"><svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a></li>
+      <li><a href="#" aria-label="Apple Music"><svg viewBox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043A5.022 5.022 0 0019.7.165C18.82.036 17.94-.004 17.05.001 14.7.009 12.35.009 10 .009c-2.31 0-4.63-.004-6.95.006C2.14.02 1.29.07.48.3A4.96 4.96 0 00.025 2.47c-.03.91-.04 1.82-.025 2.73.01 2.33.01 4.66 0 6.99-.004.94.01 1.87.06 2.81.077 1.32.498 2.5 1.4 3.47.672.73 1.5 1.2 2.46 1.42.66.15 1.33.21 2 .22 2.37.03 4.74.02 7.11.02 2.34 0 4.68.01 7.02-.02.9-.01 1.8-.08 2.67-.36 1.31-.42 2.28-1.2 2.95-2.38.47-.83.67-1.74.72-2.68.05-.95.06-1.9.06-2.86-.01-2.29-.01-4.58 0-6.87v-.04zM16.87 16.3c-.04.13-.1.26-.18.36-.47.56-1.23.56-1.76.08a1.4 1.4 0 01-.38-.56c-.08-.24-.13-.48-.15-.73-.04-.69 0-1.38-.02-2.08 0-.18-.02-.36-.08-.53-.13-.35-.4-.5-.76-.47-.32.03-.56.2-.68.5-.08.2-.11.41-.11.63-.01.73 0 1.46-.01 2.19 0 .24-.03.48-.1.71-.12.41-.42.65-.83.69-.46.05-.83-.16-.99-.57-.07-.19-.1-.39-.1-.59.01-.76.02-1.52 0-2.29 0-.2-.03-.41-.1-.6-.14-.35-.42-.5-.78-.47-.32.04-.55.21-.67.51-.07.18-.1.37-.1.56-.01.75 0 1.5-.01 2.25 0 .21-.02.42-.09.62-.14.43-.5.68-.93.68-.43 0-.77-.26-.9-.67-.05-.18-.07-.37-.07-.56 0-2.12 0-4.24.01-6.35 0-.2.02-.41.08-.6.14-.42.5-.66.92-.67.42 0 .78.24.92.65.04.12.07.25.07.38.01.38 0 .76 0 1.14 0 .04.01.08.02.15.11-.12.19-.23.29-.32.47-.42 1.02-.55 1.63-.42.52.11.93.39 1.22.84.03.05.07.08.12.06a1.88 1.88 0 011.63-.87c.7-.02 1.27.27 1.67.84.02.03.05.06.1.06.37-.55.87-.83 1.51-.89.76-.08 1.38.2 1.81.83.21.31.32.66.35 1.04.04.46.03.93.03 1.39 0 .54.01 1.08-.02 1.62-.01.24-.05.48-.13.71z"/></svg></a></li>
+      <li><a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></li>
+      <li><a href="#" aria-label="SoundCloud"><svg viewBox="0 0 24 24"><path d="M1.175 12.225c-.051 0-.094.046-.101.1l-.233 2.154.233 2.105c.007.058.05.098.101.098.05 0 .09-.04.099-.098l.255-2.105-.27-2.154c-.009-.057-.05-.1-.1-.1m-.899.828c-.06 0-.091.037-.104.094L0 14.479l.172 1.282c.013.06.045.094.104.094.057 0 .09-.037.104-.094l.197-1.282-.197-1.332c-.014-.057-.047-.094-.104-.094m1.81-1.145c-.067 0-.12.053-.127.12l-.214 2.451.214 2.36c.007.067.06.12.127.12.065 0 .115-.053.127-.12l.24-2.36-.24-2.451c-.012-.067-.062-.12-.127-.12m.862-.182c-.075 0-.135.06-.142.135l-.2 2.633.2 2.524c.007.075.067.135.142.135.074 0 .132-.06.142-.135l.225-2.524-.225-2.633c-.01-.075-.068-.135-.142-.135m.86-.12c-.082 0-.15.067-.157.15l-.188 2.753.188 2.588c.007.082.075.15.157.15.08 0 .145-.068.157-.15l.21-2.588-.21-2.753c-.012-.083-.077-.15-.157-.15m.865-.065c-.09 0-.158.075-.165.165l-.176 2.818.176 2.633c.007.09.075.165.165.165.088 0 .154-.075.165-.165l.2-2.633-.2-2.818c-.011-.09-.077-.165-.165-.165m.87.04c-.097 0-.172.08-.18.18l-.163 2.778.163 2.633c.008.097.083.18.18.18.094 0 .168-.083.18-.18l.183-2.633-.183-2.778c-.012-.1-.086-.18-.18-.18m.87-.275c-.104 0-.187.09-.195.195l-.15 3.053.15 2.602c.008.104.09.195.195.195.103 0 .183-.09.195-.195l.168-2.602-.168-3.053c-.012-.105-.092-.195-.195-.195m.862-.142c-.112 0-.202.098-.21.21l-.137 3.195.138 2.563c.007.112.097.21.21.21.11 0 .197-.098.21-.21l.153-2.563-.153-3.195c-.013-.112-.1-.21-.21-.21m.86-.14c-.12 0-.21.104-.217.217l-.12 3.337.12 2.516c.007.113.097.217.218.217.12 0 .21-.104.218-.217l.14-2.516-.14-3.337c-.008-.113-.098-.217-.218-.217m.87-.127c-.127 0-.218.11-.225.232l-.12 3.464.12 2.467c.007.12.098.232.225.232.12 0 .218-.112.225-.232l.13-2.467-.13-3.464c-.007-.12-.105-.232-.225-.232m3.21.165c-.27 0-.517.075-.735.21C10.825 8.165 8.573 7.275 6.58 8.67c-.128.09-.24.193-.346.3-.06.06-.075.135-.075.21v5.655c0 .082.06.157.142.172h5.98c.907 0 1.642-.735 1.642-1.642s-.735-1.643-1.643-1.643"/></svg></a></li>
+      <li><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a></li>
+    </ul>
+    <div class="footer-drawer-legal">
+      <div class="footer-drawer-legal-links">
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+      <div class="footer-drawer-copy">© 2026 CHIEF SOSA / GBE — ALL RIGHTS RESERVED</div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Toggle Button -->
+<button class="footer-toggle" id="footerToggle" aria-label="Toggle footer">+</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
+<script>
+// ==================== THREE.JS 3D SKULL CLUSTER ====================
+(function(){
+  const canvas = document.getElementById('skull-canvas');
+  const heroSection = document.getElementById('hero');
+  if (!canvas) return;
+
+  // Three.js setup
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x060408, 1);
+  renderer.setSize(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x060408, 0.18);
+
+  const camera = new THREE.PerspectiveCamera(50, canvas.parentElement.offsetWidth / canvas.parentElement.offsetHeight, 0.1, 100);
+  camera.position.z = 4.2;
+
+  // Lighting — dramatic bone-lit atmosphere with deep shadows
+  const ambientLight = new THREE.AmbientLight(0x1a0e2a, 0.15);
+  scene.add(ambientLight);
+
+  // Key light — warm top-right, carves bone detail and casts strong shadows
+  const mainLight = new THREE.DirectionalLight(0xe8d5c4, 1.1);
+  mainLight.position.set(2, 4, 5);
+  scene.add(mainLight);
+
+  // Fill light — cool purple from left, prevents total black
+  const fillLight = new THREE.DirectionalLight(0x6633aa, 0.25);
+  fillLight.position.set(-5, -2, 4);
+  scene.add(fillLight);
+
+  // Front fill — subtle, just enough to read the faces
+  const frontFill = new THREE.DirectionalLight(0x9977aa, 0.12);
+  frontFill.position.set(0, 0, 8);
+  scene.add(frontFill);
+
+  // Under light — eerie uplight for dramatic skull shadows
+  const underLight = new THREE.DirectionalLight(0x4411aa, 0.3);
+  underLight.position.set(0, -6, 2);
+  scene.add(underLight);
+
+  // Rim light from behind — purple edge halo
+  const rimLight = new THREE.PointLight(0x8822ee, 1.8, 20);
+  rimLight.position.set(0, 0, -6);
+  scene.add(rimLight);
+
+  // Side accent lights — asymmetric for depth
+  const sideLight1 = new THREE.PointLight(0x9944ff, 0.7, 12);
+  sideLight1.position.set(-5, 2, 1);
+  scene.add(sideLight1);
+
+  const sideLight2 = new THREE.PointLight(0x7733cc, 0.4, 12);
+  sideLight2.position.set(5, -1, 1);
+  scene.add(sideLight2);
+
+  // Hot spot — focused spotlight to highlight center skulls
+  const spotLight = new THREE.SpotLight(0xccbbee, 0.8, 15, Math.PI * 0.25, 0.6, 1.5);
+  spotLight.position.set(0, 3, 7);
+  spotLight.target.position.set(0, 0, 0);
+  scene.add(spotLight);
+  scene.add(spotLight.target);
+
+  // Procedural bone texture generator
+  function generateBoneTexture(size, hueShift) {
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = size;
+    canvas2d.height = size;
+    const ctx = canvas2d.getContext('2d');
+
+    // Base bone color with purple tint
+    const baseR = 0.42 + hueShift * 0.08;
+    const baseG = 0.32 + hueShift * 0.04;
+    const baseB = 0.48 + hueShift * 0.12;
+
+    // Fill base
+    ctx.fillStyle = `rgb(${baseR*255|0},${baseG*255|0},${baseB*255|0})`;
+    ctx.fillRect(0, 0, size, size);
+
+    // Noise layer — bone grain
+    const imgData = ctx.getImageData(0, 0, size, size);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const px = (i/4) % size;
+      const py = ((i/4) / size) | 0;
+      // Multi-octave noise approximation
+      const nx = px / size * 8;
+      const ny = py / size * 8;
+      const n1 = Math.sin(nx * 3.7 + ny * 2.3) * Math.cos(ny * 4.1 - nx * 1.8);
+      const n2 = Math.sin(nx * 7.3 - ny * 5.1) * Math.cos(ny * 8.7 + nx * 3.2) * 0.5;
+      const n3 = Math.sin(nx * 14.1 + ny * 11.3) * 0.25;
+      const grain = (n1 + n2 + n3) * 0.5 + 0.5;
+
+      // Crack-like veins
+      const vx = px / size * 12;
+      const vy = py / size * 12;
+      const vein = Math.abs(Math.sin(vx * 5.3 + Math.sin(vy * 3.7) * 2.0)) *
+                   Math.abs(Math.cos(vy * 4.1 + Math.sin(vx * 2.9) * 1.5));
+      const veinMask = Math.pow(vein, 3.0);
+
+      // Subtle pore detail
+      const pore = Math.sin(px * 0.8) * Math.sin(py * 0.9) * 0.5 + 0.5;
+      const poreMask = pore < 0.15 ? 0.85 : 1.0;
+
+      const variation = grain * 0.3 + veinMask * 0.15;
+      d[i]   = Math.min(255, d[i] * (0.75 + variation) * poreMask);
+      d[i+1] = Math.min(255, d[i+1] * (0.7 + variation * 0.8) * poreMask);
+      d[i+2] = Math.min(255, d[i+2] * (0.8 + variation * 1.1) * poreMask);
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Dark crevice splatters for aged bone look
+    for (let s = 0; s < 30; s++) {
+      const sx = Math.random() * size;
+      const sy = Math.random() * size;
+      const sr = 1 + Math.random() * 4;
+      ctx.globalAlpha = 0.05 + Math.random() * 0.1;
+      ctx.fillStyle = `rgb(${(baseR*120)|0},${(baseG*80)|0},${(baseB*140)|0})`;
+      ctx.beginPath();
+      ctx.ellipse(sx, sy, sr, sr * (0.5 + Math.random()), Math.random() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+
+    const tex = new THREE.CanvasTexture(canvas2d);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // Generate normal map from bone texture for surface detail
+  function generateBoneNormalMap(size, hueShift) {
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = size;
+    canvas2d.height = size;
+    const ctx = canvas2d.getContext('2d');
+
+    // Height map base
+    const imgData = ctx.createImageData(size, size);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const px = (i/4) % size;
+      const py = ((i/4) / size) | 0;
+      const nx = px / size * 10;
+      const ny = py / size * 10;
+      const h = (Math.sin(nx * 5.3 + ny * 3.1) * 0.3 +
+                 Math.sin(nx * 11.7 - ny * 7.3) * 0.15 +
+                 Math.sin(nx * 23.1 + ny * 17.9) * 0.08) * 0.5 + 0.5;
+      // Encode as normal map (tangent space)
+      const dx = Math.cos(nx * 5.3) * 5.3 * 0.3 + Math.cos(nx * 11.7) * 11.7 * 0.15;
+      const dy = Math.cos(ny * 3.1) * 3.1 * 0.3 - Math.cos(ny * 7.3) * 7.3 * 0.15;
+      d[i]   = ((dx * 0.03 + 0.5) * 255) | 0;
+      d[i+1] = ((dy * 0.03 + 0.5) * 255) | 0;
+      d[i+2] = 255;
+      d[i+3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    const tex = new THREE.CanvasTexture(canvas2d);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // Generate roughness map — smoother on brow ridges, rougher in crevices
+  function generateBoneRoughnessMap(size) {
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = size;
+    canvas2d.height = size;
+    const ctx = canvas2d.getContext('2d');
+    const imgData = ctx.createImageData(size, size);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const px = (i/4) % size;
+      const py = ((i/4) / size) | 0;
+      const nx = px / size * 8;
+      const ny = py / size * 8;
+      const rough = 0.55 + Math.sin(nx * 7.3 + ny * 5.1) * 0.15 +
+                    Math.sin(nx * 15.7 - ny * 11.3) * 0.08;
+      const v = (Math.max(0, Math.min(1, rough)) * 255) | 0;
+      d[i] = d[i+1] = d[i+2] = v;
+      d[i+3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+    const tex = new THREE.CanvasTexture(canvas2d);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // Pre-generate texture sets for variety (4 bone variants)
+  const texSize = 256;
+  const boneTextures = [];
+  const boneNormals = [];
+  const boneRoughness = generateBoneRoughnessMap(texSize);
+  for (let v = 0; v < 4; v++) {
+    boneTextures.push(generateBoneTexture(texSize, v * 0.25));
+    boneNormals.push(generateBoneNormalMap(texSize, v * 0.25));
+  }
+
+  function createSkullMaterial(colorIndex) {
+    const variant = colorIndex % 4;
+    const mat = new THREE.MeshStandardMaterial({
+      map: boneTextures[variant],
+      normalMap: boneNormals[variant],
+      normalScale: new THREE.Vector2(0.6, 0.6),
+      roughnessMap: boneRoughness,
+      roughness: 0.55 + Math.random() * 0.15,
+      metalness: 0.05 + Math.random() * 0.05,
+      emissive: new THREE.Color(0x1a0a30),
+      emissiveIntensity: 0.04 + Math.random() * 0.06,
+      flatShading: false,
+      envMapIntensity: 0.3,
+    });
+    mat.userData.emissiveIntensity = mat.emissiveIntensity;
+    mat.userData.variant = variant;
+    return mat;
+  }
+
+  // Skull cluster group
+  const clusterGroup = new THREE.Group();
+  scene.add(clusterGroup);
+
+  // Tightly grouped skull pile — dense center mass with organic falloff
+  const skullConfigs = [
+    // Core cluster — large skulls packed tight, slightly overlapping
+    { x: 0, y: 0, z: 0.6, scale: 0.44, rx: 0.05, ry: 0, rz: 0 },
+    { x: -0.42, y: -0.1, z: 0.5, scale: 0.40, rx: 0.03, ry: 0.15, rz: -0.04 },
+    { x: 0.45, y: 0.08, z: 0.45, scale: 0.39, rx: -0.02, ry: -0.12, rz: 0.02 },
+    { x: 0.05, y: 0.42, z: 0.4, scale: 0.38, rx: -0.10, ry: 0.04, rz: 0.01 },
+    { x: -0.15, y: -0.45, z: 0.42, scale: 0.40, rx: 0.12, ry: 0.06, rz: -0.02 },
+
+    // Second layer — tight ring, skulls nuzzled against core
+    { x: -0.85, y: 0.35, z: 0.15, scale: 0.36, rx: -0.04, ry: 0.20, rz: 0.03 },
+    { x: 0.88, y: -0.30, z: 0.10, scale: 0.35, rx: 0.06, ry: -0.18, rz: -0.02 },
+    { x: -0.70, y: -0.65, z: 0.20, scale: 0.34, rx: 0.10, ry: 0.14, rz: -0.05 },
+    { x: 0.72, y: 0.55, z: 0.12, scale: 0.33, rx: -0.08, ry: -0.10, rz: 0.04 },
+    { x: 0.25, y: -0.82, z: 0.18, scale: 0.35, rx: 0.14, ry: -0.04, rz: 0.01 },
+    { x: -0.30, y: 0.80, z: 0.10, scale: 0.33, rx: -0.12, ry: 0.08, rz: -0.01 },
+    { x: 0.55, y: -0.60, z: 0.25, scale: 0.32, rx: 0.08, ry: -0.14, rz: 0.03 },
+    { x: -0.60, y: 0.58, z: 0.22, scale: 0.31, rx: -0.06, ry: 0.16, rz: -0.03 },
+
+    // Third layer — medium skulls forming the mound shape
+    { x: -1.25, y: -0.10, z: -0.20, scale: 0.30, rx: 0.04, ry: 0.22, rz: 0.05 },
+    { x: 1.30, y: 0.15, z: -0.25, scale: 0.29, rx: -0.02, ry: -0.20, rz: 0.04 },
+    { x: 0.10, y: 1.15, z: -0.15, scale: 0.28, rx: -0.15, ry: 0.02, rz: 0.02 },
+    { x: -0.05, y: -1.20, z: -0.10, scale: 0.30, rx: 0.16, ry: 0.04, rz: -0.01 },
+    { x: -1.05, y: 0.85, z: -0.30, scale: 0.27, rx: -0.08, ry: 0.18, rz: 0.04 },
+    { x: 1.10, y: -0.80, z: -0.28, scale: 0.28, rx: 0.10, ry: -0.16, rz: -0.03 },
+    { x: 0.85, y: 0.90, z: -0.22, scale: 0.26, rx: -0.10, ry: -0.12, rz: 0.02 },
+    { x: -0.90, y: -0.90, z: -0.18, scale: 0.27, rx: 0.12, ry: 0.14, rz: -0.04 },
+    { x: -0.40, y: -1.10, z: -0.12, scale: 0.28, rx: 0.14, ry: 0.08, rz: -0.02 },
+    { x: 0.42, y: 1.05, z: -0.18, scale: 0.26, rx: -0.12, ry: -0.06, rz: 0.01 },
+
+    // Outer mound — smaller skulls, still grouped close
+    { x: -1.60, y: -0.70, z: -0.60, scale: 0.24, rx: 0.08, ry: 0.20, rz: 0.06 },
+    { x: 1.65, y: 0.65, z: -0.55, scale: 0.23, rx: -0.06, ry: -0.18, rz: 0.04 },
+    { x: -1.50, y: 0.75, z: -0.65, scale: 0.23, rx: -0.05, ry: 0.22, rz: -0.03 },
+    { x: 1.55, y: -0.70, z: -0.58, scale: 0.24, rx: 0.07, ry: -0.20, rz: 0.05 },
+    { x: 0.60, y: -1.40, z: -0.50, scale: 0.25, rx: 0.16, ry: -0.06, rz: 0.02 },
+    { x: -0.55, y: 1.35, z: -0.52, scale: 0.24, rx: -0.14, ry: 0.08, rz: -0.02 },
+    { x: -1.35, y: -1.15, z: -0.70, scale: 0.22, rx: 0.12, ry: 0.16, rz: -0.05 },
+    { x: 1.40, y: 1.10, z: -0.68, scale: 0.22, rx: -0.10, ry: -0.14, rz: 0.03 },
+    { x: 0, y: 1.50, z: -0.55, scale: 0.23, rx: -0.18, ry: 0.02, rz: 0.01 },
+    { x: 0.05, y: -1.55, z: -0.48, scale: 0.24, rx: 0.18, ry: 0, rz: -0.01 },
+
+    // Edge fill — small skulls peeking from behind
+    { x: -1.90, y: 0.20, z: -1.00, scale: 0.20, rx: 0.06, ry: 0.24, rz: 0.06 },
+    { x: 1.95, y: -0.15, z: -0.95, scale: 0.19, rx: -0.04, ry: -0.22, rz: 0.04 },
+    { x: -1.70, y: 1.20, z: -1.05, scale: 0.18, rx: -0.08, ry: 0.20, rz: 0.05 },
+    { x: 1.75, y: -1.15, z: -1.00, scale: 0.19, rx: 0.10, ry: -0.18, rz: -0.04 },
+    { x: 0.80, y: 1.50, z: -0.85, scale: 0.18, rx: -0.12, ry: -0.10, rz: 0.03 },
+    { x: -0.85, y: -1.55, z: -0.80, scale: 0.19, rx: 0.14, ry: 0.10, rz: -0.03 },
+    { x: -2.05, y: -0.95, z: -1.15, scale: 0.17, rx: 0.10, ry: 0.22, rz: 0.07 },
+    { x: 2.10, y: 0.90, z: -1.10, scale: 0.17, rx: -0.08, ry: -0.20, rz: -0.05 },
+
+    // Tiny skulls — deepest layer
+    { x: -1.20, y: 1.60, z: -1.20, scale: 0.15, rx: -0.10, ry: 0.18, rz: 0.04 },
+    { x: 1.25, y: -1.55, z: -1.15, scale: 0.15, rx: 0.12, ry: -0.16, rz: -0.03 },
+    { x: 0, y: 1.85, z: -1.10, scale: 0.14, rx: -0.20, ry: 0, rz: 0.02 },
+    { x: 0.05, y: -1.90, z: -1.05, scale: 0.14, rx: 0.20, ry: 0.02, rz: -0.01 },
+    { x: -2.20, y: 0.60, z: -1.35, scale: 0.13, rx: -0.06, ry: 0.24, rz: 0.06 },
+  ];
+
+  const skullInstances = [];
+
+  // Load GLB skull model and spawn all instances
+  let glbSkullGeo = null;
+  let glbLoaded = false;
+
+  // Create simple placeholder geometry while GLB loads
+  function createPlaceholderGeo() {
+    return new THREE.SphereGeometry(0.8, 12, 8);
+  }
+
+  // High-quality procedural skull geometry (SDF displacement on sphere)
+  function createProceduralSkullGeo(variant) {
+    variant = variant || 0;
+    var seed = variant * 0.37;
+    var sphere = new THREE.SphereGeometry(1.0, 48, 36);
+    var pos = sphere.attributes.position;
+    var norm = sphere.attributes.normal;
+
+    for (var i = 0; i < pos.count; i++) {
+      var x = pos.getX(i);
+      var y = pos.getY(i);
+      var z = pos.getZ(i);
+      var nx = norm.getX(i);
+      var ny = norm.getY(i);
+      var nz = norm.getZ(i);
+
+      var d = 0;
+
+      // Cranium: stretch top wider, make dome shape
+      if (y > 0.1) {
+        d += 0.15 * Math.pow(Math.max(0, y), 0.7);
+        // Slightly wider at temples
+        d += 0.06 * Math.sin(Math.atan2(x, z) * 2) * Math.max(0, y - 0.2);
+      }
+
+      // Narrow at sides below eyes (temporal region)
+      if (y < 0.1 && y > -0.4) {
+        d -= 0.12 * (1 - Math.abs(y + 0.15) / 0.35) * Math.abs(x);
+      }
+
+      // Brow ridge — push forward above eyes
+      var browY = y - 0.25;
+      var browStrength = Math.exp(-browY * browY / 0.008) * Math.max(0, z) * 0.35;
+      d += browStrength;
+
+      // Eye sockets — deep inward cavities
+      var eyeSpacing = 0.28 + seed * 0.04;
+      var eyeY = 0.15;
+      var eyeSize = 0.12 + seed * 0.02;
+      for (var side = -1; side <= 1; side += 2) {
+        var ex = x - side * eyeSpacing;
+        var ey = y - eyeY;
+        var ez = z - 0.6;
+        var eyeDist = Math.sqrt(ex * ex + ey * ey * 1.3 + ez * ez);
+        if (eyeDist < eyeSize * 2.5) {
+          var eyeDepth = Math.exp(-eyeDist * eyeDist / (eyeSize * eyeSize)) * 0.35;
+          d -= eyeDepth;
+        }
+      }
+
+      // Nose cavity — triangular depression
+      var noseY = y + 0.02;
+      var noseDist = Math.sqrt(x * x * 3 + noseY * noseY + (z - 0.7) * (z - 0.7));
+      if (noseDist < 0.25) {
+        d -= Math.exp(-noseDist * noseDist / 0.015) * 0.25;
+      }
+      // Nasal bone ridge
+      var ridgeDist = Math.abs(x) + Math.abs(y - 0.08) * 0.5;
+      if (ridgeDist < 0.06 && z > 0.5) {
+        d += 0.05 * (1 - ridgeDist / 0.06);
+      }
+
+      // Cheekbones — push outward
+      for (var side = -1; side <= 1; side += 2) {
+        var cx = x - side * 0.45;
+        var cy = y - 0.05;
+        var cz = z - 0.3;
+        var cheekDist = Math.sqrt(cx * cx + cy * cy * 2 + cz * cz);
+        d += Math.exp(-cheekDist * cheekDist / 0.06) * 0.12;
+      }
+
+      // Maxilla / upper jaw — extend forward below nose
+      if (y < 0.0 && y > -0.35 && z > 0.2) {
+        var jawForward = Math.exp(-(y + 0.15) * (y + 0.15) / 0.02) * Math.max(0, z - 0.2) * 0.3;
+        d += jawForward;
+        // Slight inward curve for teeth area
+        var teethX = Math.abs(x);
+        if (teethX < 0.25 && y > -0.25 && y < -0.05) {
+          d += 0.04 * (1 - teethX / 0.25);
+        }
+      }
+
+      // Mandible / lower jaw
+      if (y < -0.3) {
+        var jawDrop = 0.42 + seed * 0.06;
+        var jawWidth = 0.35;
+        // U-shape jaw
+        var jawCurve = Math.max(0, 1 - (x * x) / (jawWidth * jawWidth));
+        var jawDepth = Math.exp(-(y + jawDrop) * (y + jawDrop) / 0.015) * jawCurve * 0.2;
+        d += jawDepth;
+        // Chin protrusion
+        var chinDist = Math.sqrt(x * x * 4 + (y + jawDrop) * (y + jawDrop) + (z - 0.4) * (z - 0.4));
+        d += Math.exp(-chinDist * chinDist / 0.02) * 0.1;
+      }
+
+      // Flatten the back of the skull
+      if (z < -0.3) {
+        d -= 0.08 * Math.max(0, -z - 0.3);
+      }
+
+      // Zygomatic arch (cheek to ear bone bridge)
+      for (var side = -1; side <= 1; side += 2) {
+        var ax = x - side * 0.55;
+        var ay = y - 0.0;
+        var az = z - 0.0;
+        var archDist = Math.sqrt(ax * ax * 0.5 + ay * ay * 4 + az * az);
+        if (archDist < 0.2) {
+          d += 0.06 * (1 - archDist / 0.2);
+        }
+      }
+
+      // Slight variant perturbation for uniqueness
+      d += Math.sin(x * 12 + seed * 5) * Math.sin(y * 10 + seed * 3) * 0.008;
+
+      // Apply displacement along normal
+      pos.setXYZ(i, x + nx * d, y + ny * d, z + nz * d);
+    }
+
+    pos.needsUpdate = true;
+    sphere.computeVertexNormals();
+    sphere.computeBoundingBox();
+    sphere.computeBoundingSphere();
+    return sphere;
+  }
+
+  // Spawn all skulls immediately with placeholder geometry
+  for (let i = 0; i < skullConfigs.length; i++) {
+    const cfg = skullConfigs[i];
+    const mat = createSkullMaterial(i);
+    const geo = createPlaceholderGeo();
+    const mesh = new THREE.Mesh(geo, mat);
+
+    mesh.position.set(cfg.x, cfg.y, cfg.z);
+    mesh.rotation.set(cfg.rx, cfg.ry, cfg.rz);
+    mesh.scale.setScalar(cfg.scale);
+    // Hide placeholders until GLB loads
+    mesh.visible = false;
+
+    clusterGroup.add(mesh);
+
+    skullInstances.push({
+      mesh,
+      baseX: cfg.x,
+      baseY: cfg.y,
+      baseZ: cfg.z,
+      rotSpeed: 0.04 + Math.random() * 0.08,
+      bobPhase: Math.random() * Math.PI * 2,
+      bobAmp: 0.008 + Math.random() * 0.015,
+      baseRx: cfg.rx * 0.3,
+      baseRy: cfg.ry * 0.4,
+      baseRz: cfg.rz * 0.15,
+      popping: false,
+      popStart: -1,
+      targetScale: cfg.scale,
+    });
+  }
+
+  // Swap in real skull geometry with staggered pop-in
+  let fallbackActivated = false;
+  function swapSkullGeometry(geoSource) {
+    if (fallbackActivated && geoSource === 'fallback') return; // already swapped
+    if (glbLoaded && geoSource === 'fallback') return; // GLB already loaded, skip fallback
+    fallbackActivated = true;
+
+    var now = performance.now() / 1000;
+    for (var i = 0; i < skullInstances.length; i++) {
+      var sk = skullInstances[i];
+      sk.mesh.geometry.dispose();
+      if (geoSource === 'glb') {
+        sk.mesh.geometry = glbSkullGeo.clone();
+      } else {
+        // Procedural fallback — 8 variants distributed across instances
+        sk.mesh.geometry = createProceduralSkullGeo(i % 8);
+      }
+      sk.mesh.visible = true;
+      sk.mesh.scale.setScalar(0.001); // start tiny for pop-in
+      sk.popping = true;
+      sk.popStart = now + i * 0.06; // stagger by 60ms each
+    }
+  }
+
+  // Show a loading indicator while waiting for skulls
+  var loadingOverlay = document.createElement('div');
+  loadingOverlay.id = 'skull-loading';
+  loadingOverlay.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#9B3FDF;font-family:"Space Mono",monospace;font-size:14px;letter-spacing:4px;text-transform:uppercase;pointer-events:none;z-index:10;opacity:1;transition:opacity 0.8s ease;';
+  loadingOverlay.innerHTML = '<span style="animation:skullPulse 1.2s ease-in-out infinite">SUMMONING...</span>';
+  canvas.parentElement.style.position = canvas.parentElement.style.position || 'relative';
+  canvas.parentElement.appendChild(loadingOverlay);
+
+  // Add pulse animation
+  var pulseStyle = document.createElement('style');
+  pulseStyle.textContent = '@keyframes skullPulse{0%,100%{opacity:0.3}50%{opacity:1}}';
+  document.head.appendChild(pulseStyle);
+
+  function hideLoadingOverlay() {
+    if (loadingOverlay && loadingOverlay.parentElement) {
+      loadingOverlay.style.opacity = '0';
+      setTimeout(function() {
+        if (loadingOverlay.parentElement) loadingOverlay.parentElement.removeChild(loadingOverlay);
+      }, 800);
+    }
+  }
+
+  // 3-second fallback timeout — if GLB hasn't loaded, swap in procedural skulls
+  var fallbackTimer = setTimeout(function() {
+    if (!glbLoaded && !fallbackActivated) {
+      console.warn('GLB load timeout (3s) — activating procedural skull fallback');
+      swapSkullGeometry('fallback');
+      hideLoadingOverlay();
+    }
+  }, 3000);
+
+  // Load the GLB model
+  (function loadGLBSkull() {
+    const modelData = window.UPLOADED_3D_MODELS && window.UPLOADED_3D_MODELS.find(function(m) {
+      return m.name.indexOf('Meshy_AI') !== -1 || m.name.indexOf('.glb') !== -1;
+    });
+
+    if (!modelData) {
+      console.warn('No GLB model found in UPLOADED_3D_MODELS — activating procedural fallback now');
+      if (!fallbackActivated) {
+        swapSkullGeometry('fallback');
+        hideLoadingOverlay();
+        clearTimeout(fallbackTimer);
+      }
+      return;
+    }
+
+    var dracoLoader = new THREE.DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+    var loader = new THREE.GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
+    loader.load(modelData.dataUrl, function(gltf) {
+      console.log('GLB skull loaded successfully');
+
+      // Merge all geometry from the GLB into one
+      var geometries = [];
+      gltf.scene.traverse(function(child) {
+        if (child.isMesh && child.geometry) {
+          var cloned = child.geometry.clone();
+          child.updateWorldMatrix(true, false);
+          cloned.applyMatrix4(child.matrixWorld);
+          if (cloned.attributes.position) {
+            var posAttr = cloned.attributes.position;
+            var normAttr = cloned.attributes.normal;
+            var newGeo = new THREE.BufferGeometry();
+            newGeo.setAttribute('position', posAttr);
+            if (normAttr) newGeo.setAttribute('normal', normAttr);
+            if (cloned.index) newGeo.setIndex(cloned.index);
+            geometries.push(newGeo);
+          }
+        }
+      });
+
+      if (geometries.length === 0) {
+        console.warn('No meshes found in GLB — procedural fallback will activate');
+        return;
+      }
+
+      var mergedGeo;
+      if (geometries.length === 1) {
+        mergedGeo = geometries[0];
+      } else {
+        mergedGeo = THREE.BufferGeometryUtils
+          ? THREE.BufferGeometryUtils.mergeBufferGeometries(geometries, false)
+          : geometries[0];
+      }
+
+      if (!mergedGeo) {
+        console.warn('Geometry merge failed — procedural fallback will activate');
+        return;
+      }
+
+      // Normalize: center and scale to fit in a 2-unit bounding box
+      mergedGeo.computeBoundingBox();
+      var bbox = mergedGeo.boundingBox;
+      var center = new THREE.Vector3();
+      bbox.getCenter(center);
+      var size = new THREE.Vector3();
+      bbox.getSize(size);
+      var maxDim = Math.max(size.x, size.y, size.z);
+      var scaleFactor = 2.0 / maxDim;
+
+      var pos = mergedGeo.attributes.position;
+      for (var i = 0; i < pos.count; i++) {
+        var px = (pos.getX(i) - center.x) * scaleFactor;
+        var py = (pos.getY(i) - center.y) * scaleFactor;
+        var pz = (pos.getZ(i) - center.z) * scaleFactor;
+        pos.setXYZ(i, px, py, pz);
+      }
+      pos.needsUpdate = true;
+      mergedGeo.computeVertexNormals();
+      mergedGeo.computeBoundingBox();
+      mergedGeo.computeBoundingSphere();
+
+      glbSkullGeo = mergedGeo;
+      glbLoaded = true;
+      clearTimeout(fallbackTimer); // cancel fallback since GLB loaded in time
+
+      // Swap in GLB geometry with pop-in
+      swapSkullGeometry('glb');
+      hideLoadingOverlay();
+    }, undefined, function(err) {
+      console.error('GLB load error:', err, '— procedural fallback will activate');
+      // Immediately trigger fallback on error instead of waiting for timeout
+      if (!fallbackActivated) {
+        swapSkullGeometry('fallback');
+        hideLoadingOverlay();
+        clearTimeout(fallbackTimer);
+      }
+    });
+  })();
+
+  // Post-processing — UnrealBloomPass + Chromatic Aberration
+  const composer = new THREE.EffectComposer(renderer);
+  const renderPass = new THREE.RenderPass(scene, camera);
+  composer.addPass(renderPass);
+
+  const bloomPass = new THREE.UnrealBloomPass(
+    new THREE.Vector2(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight),
+    0.45,  // strength — subtle atmospheric glow
+    0.8,   // radius — wide soft bloom
+    0.4    // threshold — only catch highlights
+  );
+  composer.addPass(bloomPass);
+
+  // Animated fog/haze layer — drifting noise overlay for atmospheric depth
+  const fogHazeShader = {
+    uniforms: {
+      tDiffuse: { value: null },
+      uTime: { value: 0.0 },
+      uIntensity: { value: 0.12 },
+      uSpeed: { value: 0.08 },
+      uScale: { value: 3.0 },
+      uColor: { value: new THREE.Vector3(0.02, 0.07, 0.03) }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D tDiffuse;
+      uniform float uTime;
+      uniform float uIntensity;
+      uniform float uSpeed;
+      uniform float uScale;
+      uniform vec3 uColor;
+      varying vec2 vUv;
+
+      // Simplex-style noise via hash
+      vec3 mod289(vec3 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
+      vec2 mod289(vec2 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
+      vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+      float snoise(vec2 v) {
+        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                           -0.577350269189626, 0.024390243902439);
+        vec2 i = floor(v + dot(v, C.yy));
+        vec2 x0 = v - i + dot(i, C.xx);
+        vec2 i1;
+        i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+        vec4 x12 = x0.xyxy + C.xxzz;
+        x12.xy -= i1;
+        i = mod289(i);
+        vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0))
+                + i.x + vec3(0.0, i1.x, 1.0));
+        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+                dot(x12.zw,x12.zw)), 0.0);
+        m = m*m;
+        m = m*m;
+        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+        vec3 h = abs(x) - 0.5;
+        vec3 ox = floor(x + 0.5);
+        vec3 a0 = x - ox;
+        m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+        vec3 g;
+        g.x = a0.x * x0.x + h.x * x0.y;
+        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+        return 130.0 * dot(m, g);
+      }
+
+      float fbm(vec2 p) {
+        float f = 0.0;
+        f += 0.5000 * snoise(p); p *= 2.02;
+        f += 0.2500 * snoise(p); p *= 2.03;
+        f += 0.1250 * snoise(p); p *= 2.01;
+        f += 0.0625 * snoise(p);
+        return f / 0.9375;
+      }
+
+      void main() {
+        vec4 texel = texture2D(tDiffuse, vUv);
+
+        // Two layers of drifting fog at different speeds/scales
+        float t = uTime * uSpeed;
+        vec2 uv1 = vUv * uScale + vec2(t * 0.6, t * 0.3);
+        vec2 uv2 = vUv * uScale * 1.8 + vec2(-t * 0.4, t * 0.5);
+
+        float fog1 = fbm(uv1) * 0.5 + 0.5;
+        float fog2 = fbm(uv2) * 0.5 + 0.5;
+        float fog = fog1 * 0.6 + fog2 * 0.4;
+
+        // Shape fog: thicker at edges, thinner at center
+        vec2 center = vUv - 0.5;
+        float edgeDist = length(center);
+        float edgeMask = smoothstep(0.1, 0.7, edgeDist);
+        fog *= mix(0.2, 1.0, edgeMask);
+
+        // Soft vertical bias — more haze at bottom
+        fog *= mix(0.6, 1.0, 1.0 - vUv.y);
+
+        // Apply fog as an additive haze tinted with uColor
+        vec3 hazeColor = uColor * (1.0 + fog * 0.5);
+        vec3 result = texel.rgb + hazeColor * fog * uIntensity;
+
+        // Slight contrast preservation — don't wash out highlights
+        float lum = dot(texel.rgb, vec3(0.299, 0.587, 0.114));
+        float preserve = smoothstep(0.4, 0.8, lum);
+        result = mix(result, texel.rgb, preserve * 0.5);
+
+        gl_FragColor = vec4(result, texel.a);
+      }
+    `
+  };
+
+  const fogHazePass = new THREE.ShaderPass(fogHazeShader);
+  composer.addPass(fogHazePass);
+
+  // Custom post-processing: chromatic aberration + vignette + subtle color grade
+  const chromaticAberrationShader = {
+    uniforms: {
+      tDiffuse: { value: null },
+      uIntensity: { value: 0.002 },
+      uTime: { value: 0.0 },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D tDiffuse;
+      uniform float uIntensity;
+      uniform float uTime;
+      varying vec2 vUv;
+      void main() {
+        vec2 center = vUv - 0.5;
+        float dist = length(center);
+        float aberration = uIntensity * (1.0 + dist * 3.0) * (1.0 + sin(uTime * 0.4) * 0.1);
+        vec2 dir = normalize(center + 0.001);
+        float r = texture2D(tDiffuse, vUv + dir * aberration).r;
+        float g = texture2D(tDiffuse, vUv).g;
+        float b = texture2D(tDiffuse, vUv - dir * aberration).b;
+        vec3 color = vec3(r, g, b);
+
+        // Vignette — dark edges
+        float vignette = 1.0 - smoothstep(0.3, 0.85, dist);
+        color *= mix(0.25, 1.0, vignette);
+
+        // Subtle warm-purple color grade in shadows
+        float lum = dot(color, vec3(0.299, 0.587, 0.114));
+        vec3 shadowTint = vec3(0.06, 0.02, 0.10);
+        color += shadowTint * (1.0 - lum) * 0.35;
+
+        // Slight highlight desaturation for bone realism
+        vec3 desat = vec3(lum);
+        float highlightMask = smoothstep(0.5, 0.9, lum);
+        color = mix(color, desat, highlightMask * 0.2);
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `
+  };
+
+  const chromaticPass = new THREE.ShaderPass(chromaticAberrationShader);
+  composer.addPass(chromaticPass);
+
+  // Input tracking — cursor on desktop, gyroscope on mobile
+  let mouseX = 0, mouseY = 0;
+  let targetX = 0, targetY = 0;
+  let isGyroActive = false;
+  let gyroBaseAlpha = null, gyroBaseBeta = null;
+
+  // Desktop: enhanced cursor tracking with depth parallax
+  document.addEventListener('mousemove', (e) => {
+    if (isGyroActive) return;
+    targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+    targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  // Mobile: gyroscope orientation
+  function initGyroscope() {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // iOS 13+ requires permission
+      DeviceOrientationEvent.requestPermission().then(function(state) {
+        if (state === 'granted') {
+          window.addEventListener('deviceorientation', handleGyro, true);
+          isGyroActive = true;
+        }
+      }).catch(function() {});
+    } else if ('DeviceOrientationEvent' in window) {
+      window.addEventListener('deviceorientation', handleGyro, true);
+      // Confirm gyro is actually producing values
+      setTimeout(function() {
+        if (gyroBaseAlpha === null) isGyroActive = false;
+      }, 1000);
+    }
+  }
+
+  function handleGyro(e) {
+    if (e.gamma === null && e.beta === null) return;
+    isGyroActive = true;
+    // gamma: left/right tilt (-90 to 90), beta: front/back tilt (-180 to 180)
+    if (gyroBaseAlpha === null) {
+      gyroBaseAlpha = e.gamma || 0;
+      gyroBaseBeta = e.beta || 0;
+    }
+    var gx = ((e.gamma || 0) - gyroBaseAlpha);
+    var gy = ((e.beta || 0) - gyroBaseBeta);
+    // Clamp and normalize to -1..1 range (±30 degrees from rest)
+    targetX = Math.max(-1, Math.min(1, gx / 30)) * 2;
+    targetY = Math.max(-1, Math.min(1, gy / 30)) * 2;
+  }
+
+  // Try to init gyroscope on first touch (for iOS permission)
+  document.addEventListener('touchstart', function gyroInit() {
+    initGyroscope();
+    document.removeEventListener('touchstart', gyroInit);
+  }, { once: true });
+
+  // Also try immediately for Android
+  initGyroscope();
+
+  // Scroll tracking
+  let scrollProgress = 0;
+  const cornerTL = document.querySelector('.nav-corner--tl');
+  const cornerTR = document.querySelector('.nav-corner--tr');
+  const cornerBL = document.querySelector('.nav-corner--bl');
+  const cornerBR = document.querySelector('.nav-corner--br');
+
+  window.addEventListener('scroll', () => {
+    scrollProgress = Math.min(window.scrollY / (window.innerHeight * 0.8), 1);
+
+    // Corner nav parallax — drift inward as user scrolls past hero
+    const maxDrift = 60;
+    const drift = scrollProgress * maxDrift;
+    const maxVertDrift = 20;
+    const vDrift = scrollProgress * maxVertDrift;
+
+    if (cornerTL) {
+      cornerTL.style.left = (32 + drift) + 'px';
+      cornerTL.style.top = (32 + vDrift) + 'px';
+    }
+    if (cornerTR) {
+      cornerTR.style.right = (32 + drift) + 'px';
+      cornerTR.style.top = (32 + vDrift) + 'px';
+    }
+    if (cornerBL) {
+      cornerBL.style.left = (32 + drift) + 'px';
+      cornerBL.style.bottom = (32 + vDrift) + 'px';
+    }
+    if (cornerBR) {
+      cornerBR.style.right = (32 + drift) + 'px';
+      cornerBR.style.bottom = (32 + vDrift) + 'px';
+    }
+  });
+
+  // Smooth mouse values
+  let smx = 0, smy = 0;
+  const startTime = Date.now();
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const t = (Date.now() - startTime) / 1000;
+
+    // Smooth input (cursor or gyro)
+    mouseX += (targetX - mouseX) * 0.06;
+    mouseY += (targetY - mouseY) * 0.06;
+    smx += (mouseX - smx) * 0.04;
+    smy += (mouseY - smy) * 0.04;
+
+    // Global cluster rotation — motion parallax from cursor/gyro
+    clusterGroup.rotation.y = smx * 0.12;
+    clusterGroup.rotation.x = smy * 0.08;
+
+    // Camera subtle offset for depth parallax
+    camera.position.x = smx * 0.15;
+    camera.position.y = -smy * 0.1;
+    camera.lookAt(0, 0, 0);
+
+    // Animate individual skulls
+    for (let i = 0; i < skullInstances.length; i++) {
+      const sk = skullInstances[i];
+      const mesh = sk.mesh;
+
+      // Pop-in animation when GLB swaps in
+      if (sk.popping) {
+        var popElapsed = t - sk.popStart;
+        if (popElapsed < 0) {
+          // Waiting for stagger delay
+          mesh.scale.setScalar(0.001);
+          continue;
+        }
+        var popDuration = 0.8;
+        if (popElapsed < popDuration) {
+          // Elastic ease-out
+          var p = popElapsed / popDuration;
+          var elastic = 1 - Math.pow(2, -10 * p) * Math.cos(p * Math.PI * 3.5);
+          mesh.scale.setScalar(sk.targetScale * elastic);
+          continue;
+        } else {
+          // Pop complete
+          sk.popping = false;
+          mesh.scale.setScalar(sk.targetScale);
+        }
+      }
+
+      // Scatter on scroll — tighter explosion from dense pile
+      const easeScatter = scrollProgress * scrollProgress;
+      const scatterX = sk.baseX * 2.5 * easeScatter;
+      const scatterY = sk.baseY * 2.5 * easeScatter;
+      const scatterZ = sk.baseZ * 2.0 * easeScatter - 1.5 * easeScatter;
+
+      mesh.position.x = sk.baseX + scatterX;
+      mesh.position.y = sk.baseY + scatterY + Math.sin(t * 0.5 + sk.bobPhase) * sk.bobAmp;
+      mesh.position.z = sk.baseZ + scatterZ;
+
+      // Minimal rotation drift — solid pile feel
+      mesh.rotation.x = sk.baseRx + Math.sin(t * sk.rotSpeed * 0.2 + sk.bobPhase) * 0.02;
+      mesh.rotation.y = sk.baseRy + Math.sin(t * sk.rotSpeed * 0.15 + sk.bobPhase * 1.3) * 0.03;
+      mesh.rotation.z = sk.baseRz + Math.sin(t * sk.rotSpeed * 0.1 + sk.bobPhase * 0.7) * 0.01;
+
+      // Subtle emissive breathing — very restrained for bone realism
+      if (mesh.material.emissiveIntensity !== undefined) {
+        var baseEm = mesh.material.userData.emissiveIntensity || 0.05;
+        mesh.material.emissiveIntensity = baseEm + Math.sin(t * 0.6 + sk.bobPhase) * 0.02;
+      }
+    }
+
+    // Rim light pulse — slow breathing
+    rimLight.intensity = 1.5 + Math.sin(t * 0.5) * 0.3;
+
+    // Spotlight subtle sway
+    spotLight.position.x = Math.sin(t * 0.3) * 0.5;
+
+    // Update bloom intensity based on scroll
+    bloomPass.strength = 0.5 + (1 - scrollProgress) * 0.25;
+
+    // Update fog haze time uniform
+    fogHazePass.uniforms.uTime.value = t;
+    fogHazePass.uniforms.uIntensity.value = 0.10 + scrollProgress * 0.06;
+
+    // Update chromatic aberration time uniform
+    chromaticPass.uniforms.uTime.value = t;
+    chromaticPass.uniforms.uIntensity.value = 0.0015 + scrollProgress * 0.002;
+
+    composer.render();
+  }
+
+  // Handle resize
+  window.addEventListener('resize', () => {
+    const w = canvas.parentElement.offsetWidth;
+    const h = canvas.parentElement.offsetHeight;
+    renderer.setSize(w, h);
+    composer.setSize(w, h);
+    bloomPass.resolution.set(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  });
+
+  animate();
+})();
+
+// ==================== CRACKED EARTH BACKGROUND ====================
+(function(){
+  const ceCanvas = document.getElementById('cracked-earth-canvas');
+  const ceCtx = ceCanvas.getContext('2d');
+  let ceW, ceH;
+
+  function resizeCE() {
+    ceW = ceCanvas.parentElement.offsetWidth;
+    ceH = ceCanvas.parentElement.offsetHeight;
+    ceCanvas.width = ceW;
+    ceCanvas.height = ceH;
+    drawCrackedEarth();
+  }
+
+  // Seeded random for consistent cracks
+  let seed = 42;
+  function srand() {
+    seed = (seed * 16807 + 0) % 2147483647;
+    return (seed - 1) / 2147483646;
+  }
+
+  // 2D noise
+  function hash2(x, y) {
+    let h = x * 374761393 + y * 668265263 + seed;
+    h = (h ^ (h >> 13)) * 1274126177;
+    return ((h ^ (h >> 16)) & 0x7fffffff) / 2147483647;
+  }
+
+  function noise(x, y) {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = x - ix, fy = y - iy;
+    const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+    const a = hash2(ix, iy), b = hash2(ix+1, iy);
+    const c = hash2(ix, iy+1), d = hash2(ix+1, iy+1);
+    return a + (b-a)*sx + (c-a)*sy + (a-b-c+d)*sx*sy;
+  }
+
+  function fbm(x, y, oct) {
+    let v = 0, a = 0.5, freq = 1;
+    for (let i = 0; i < oct; i++) {
+      v += a * noise(x * freq, y * freq);
+      freq *= 2.1;
+      a *= 0.48;
+    }
+    return v;
+  }
+
+  function drawCrackedEarth() {
+    if (!ceW || !ceH) return;
+
+    // Dark rocky base texture
+    const imageData = ceCtx.createImageData(ceW, ceH);
+    const data = imageData.data;
+    const scaleBase = 0.005;
+    const scaleDetail = 0.02;
+
+    for (let y = 0; y < ceH; y++) {
+      for (let x = 0; x < ceW; x++) {
+        const idx = (y * ceW + x) * 4;
+        const nx = x * scaleBase;
+        const ny = y * scaleBase;
+
+        // Multi-octave rocky texture
+        const rock = fbm(nx, ny, 6);
+        const detail = fbm(x * scaleDetail, y * scaleDetail, 4);
+
+        // Voronoi-style crack detection
+        const cellScale = 0.008;
+        const cx = x * cellScale;
+        const cy = y * cellScale;
+        const cellX = Math.floor(cx);
+        const cellY = Math.floor(cy);
+        let minDist = 10, secondDist = 10;
+
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const ncx = cellX + dx;
+            const ncy = cellY + dy;
+            const px = ncx + hash2(ncx * 7, ncy * 13);
+            const py = ncy + hash2(ncx * 13, ncy * 7);
+            const d = Math.sqrt((cx-px)*(cx-px) + (cy-py)*(cy-py));
+            if (d < minDist) { secondDist = minDist; minDist = d; }
+            else if (d < secondDist) { secondDist = d; }
+          }
+        }
+
+        const edge = secondDist - minDist;
+        const crackMask = edge < 0.04 ? (1.0 - edge / 0.04) * 0.6 : 0;
+
+        // Finer crack network overlay
+        const cellScale2 = 0.018;
+        const cx2 = x * cellScale2;
+        const cy2 = y * cellScale2;
+        const cellX2 = Math.floor(cx2);
+        const cellY2 = Math.floor(cy2);
+        let minD2 = 10, secD2 = 10;
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const ncx = cellX2 + dx;
+            const ncy = cellY2 + dy;
+            const px = ncx + hash2(ncx * 17 + 99, ncy * 31 + 77);
+            const py = ncy + hash2(ncx * 31 + 77, ncy * 17 + 99);
+            const d = Math.sqrt((cx2-px)*(cx2-px) + (cy2-py)*(cy2-py));
+            if (d < minD2) { secD2 = minD2; minD2 = d; }
+            else if (d < secD2) { secD2 = d; }
+          }
+        }
+        const edge2 = secD2 - minD2;
+        const crackMask2 = edge2 < 0.03 ? (1.0 - edge2 / 0.03) * 0.3 : 0;
+
+        const totalCrack = Math.min(crackMask + crackMask2, 1.0);
+
+        // Base dark stone color: very dark purple-brown (subtle)
+        const baseR = 10 + rock * 12 + detail * 5;
+        const baseG = 7 + rock * 7 + detail * 3;
+        const baseB = 13 + rock * 15 + detail * 6;
+
+        // Cracks are darker with faint purple glow at edges
+        const crackR = 3 + totalCrack * 4;
+        const crackG = 1 + totalCrack * 2;
+        const crackB = 5 + totalCrack * 8;
+
+        const r = baseR * (1 - totalCrack * 0.5) + crackR * totalCrack;
+        const g = baseG * (1 - totalCrack * 0.5) + crackG * totalCrack;
+        const b = baseB * (1 - totalCrack * 0.5) + crackB * totalCrack;
+
+        // Distance from center — darken edges, lighten center subtly
+        const distX = (x / ceW - 0.5) * 2;
+        const distY = (y / ceH - 0.5) * 2;
+        const dist = Math.sqrt(distX * distX + distY * distY);
+        const centerGlow = Math.max(0, 1 - dist * 0.9);
+        const vigDarken = Math.max(0.35, 1 - dist * 0.45);
+
+        // Very subtle purple center glow from skulls
+        const glowR = centerGlow * 8;
+        const glowG = centerGlow * 2;
+        const glowB = centerGlow * 12;
+
+        data[idx]     = Math.min(255, (r + glowR) * vigDarken);
+        data[idx + 1] = Math.min(255, (g + glowG) * vigDarken);
+        data[idx + 2] = Math.min(255, (b + glowB) * vigDarken);
+        data[idx + 3] = 110; // more transparent for subtlety
+      }
+    }
+
+    ceCtx.putImageData(imageData, 0, 0);
+
+    // Draw faint crack lines on top for subtle depth
+    ceCtx.save();
+    seed = 77;
+    ceCtx.strokeStyle = 'rgba(25, 8, 38, 0.3)';
+    ceCtx.lineWidth = 0.8;
+    ceCtx.shadowColor = 'rgba(80, 30, 120, 0.06)';
+    ceCtx.shadowBlur = 3;
+
+    for (let i = 0; i < 18; i++) {
+      ceCtx.beginPath();
+      let cx = srand() * ceW;
+      let cy = srand() * ceH;
+      ceCtx.moveTo(cx, cy);
+      const segments = 5 + Math.floor(srand() * 12);
+      for (let s = 0; s < segments; s++) {
+        const angle = srand() * Math.PI * 2;
+        const len = 12 + srand() * 40;
+        cx += Math.cos(angle) * len;
+        cy += Math.sin(angle) * len;
+        ceCtx.lineTo(cx, cy);
+        // Sparse branching
+        if (srand() > 0.75) {
+          const bAngle = angle + (srand() - 0.5) * 1.2;
+          const bLen = 8 + srand() * 20;
+          ceCtx.moveTo(cx, cy);
+          ceCtx.lineTo(cx + Math.cos(bAngle) * bLen, cy + Math.sin(bAngle) * bLen);
+          ceCtx.moveTo(cx, cy);
+        }
+      }
+      ceCtx.stroke();
+    }
+    ceCtx.restore();
+  }
+
+  resizeCE();
+  window.addEventListener('resize', resizeCE);
+})();
+
+// ==================== AUDIO (TRACK PLAYER) ====================
+let audioTrack = null;
+let audioPlaying = false;
+
+function initAudio() {
+  audioTrack = new Audio('assets/hief-Keef-Only-For-The-Night-Official-A_Media_hp8x9eRHD30_008_128k.m4a');
+  audioTrack.loop = true;
+  audioTrack.volume = 0;
+}
+
+function formatTime(sec) {
+  if (isNaN(sec)) return '0:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function toggleAudio() {
+  if (!audioTrack) initAudio();
+  const heroBar = document.getElementById('heroAudioBar');
+
+  if (!audioPlaying) {
+    audioTrack.play().then(() => {
+      let vol = 0;
+      const fadeIn = setInterval(() => {
+        vol = Math.min(vol + 0.02, 0.8);
+        audioTrack.volume = vol;
+        if (vol >= 0.8) clearInterval(fadeIn);
+      }, 30);
+    }).catch(() => {});
+    if (heroBar) heroBar.classList.add('active');
+    audioPlaying = true;
+  } else {
+    let vol = audioTrack.volume;
+    const fadeOut = setInterval(() => {
+      vol = Math.max(vol - 0.04, 0);
+      audioTrack.volume = vol;
+      if (vol <= 0) {
+        clearInterval(fadeOut);
+        audioTrack.pause();
+      }
+    }, 30);
+    if (heroBar) heroBar.classList.remove('active');
+    audioPlaying = false;
+  }
+}
+
+function toggleAudioFromHero() {
+  toggleAudio();
+}
+
+// ==================== MOBILE NAV ====================
+function toggleMobile() {
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobileOverlay').classList.toggle('open');
+}
+
+function closeMobile() {
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+}
+
+// ==================== SPA ROUTER ====================
+let currentPage = 'home';
+
+function navigateTo(page) {
+  // If clicking the same page link, go home
+  if (page === currentPage && page !== 'home') {
+    page = 'home';
+  }
+  if (page === currentPage) return;
+
+  const allPages = document.querySelectorAll('.page');
+  const target = document.getElementById('page-' + page);
+
+  if (!target) return;
+
+  // Deactivate all pages
+  allPages.forEach(p => p.classList.remove('active'));
+
+  // Activate target page
+  setTimeout(() => {
+    target.classList.add('active');
+    target.scrollTop = 0;
+
+    // Trigger reveal animations inside the new page
+    const reveals = target.querySelectorAll('.reveal');
+    reveals.forEach(el => {
+      el.classList.remove('visible');
+      void el.offsetWidth; // force reflow
+    });
+    setTimeout(() => {
+      reveals.forEach(el => {
+        const delay = getComputedStyle(el).getPropertyValue('--delay') || '0s';
+        el.style.transitionDelay = delay;
+        el.classList.add('visible');
+      });
+    }, 100);
+  }, page === 'home' ? 50 : 200);
+
+  // Update corner nav active states
+  document.querySelectorAll('.nav-corner a').forEach(a => a.classList.remove('active'));
+  const cornerMap = { music: '.nav-corner--tl a', shop: '.nav-corner--tr a', tour: '.nav-corner--bl a', vault: '.nav-corner--br a' };
+  if (cornerMap[page]) {
+    const activeLink = document.querySelector(cornerMap[page]);
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  // Corners always visible — dim wordmark on sub-pages
+  const wordmark = document.querySelector('.nav-wordmark');
+  const corners = document.querySelectorAll('.nav-corner');
+  corners.forEach(c => {
+    c.style.opacity = '1';
+    c.style.pointerEvents = 'all';
+  });
+  if (page === 'home') {
+    if (wordmark) wordmark.style.opacity = '1';
+  } else {
+    if (wordmark) wordmark.style.opacity = '0.6';
+  }
+
+  currentPage = page;
+}
+
+// Handle browser back/forward
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.replace('#/', '').replace('#', '') || 'home';
+  navigateTo(hash);
+});
+
+// Check initial hash
+(function() {
+  const hash = window.location.hash.replace('#/', '').replace('#', '');
+  if (hash && hash !== 'home') {
+    setTimeout(() => navigateTo(hash), 1600); // after loader
+  }
+})();
+
+// ==================== SCROLL ANIMATIONS ====================
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const delay = getComputedStyle(entry.target).getPropertyValue('--delay') || '0s';
+      entry.target.style.transitionDelay = delay;
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+reveals.forEach(el => observer.observe(el));
+
+// Nav visibility
+const nav = document.getElementById('mainNav');
+if (nav) setTimeout(() => nav.classList.add('visible'), 1500);
+
+// ==================== LOADER ====================
+const loaderFill = document.getElementById('loader-fill');
+let loadProgress = 0;
+const loadInterval = setInterval(() => {
+  loadProgress += Math.random() * 15 + 5;
+  if (loadProgress >= 100) {
+    loadProgress = 100;
+    clearInterval(loadInterval);
+    setTimeout(() => {
+      const loader = document.getElementById('loader');
+      if (loader) loader.classList.add('hidden');
+    }, 400);
+  }
+  const pct = 100 - Math.min(loadProgress, 100);
+  loaderFill.style.clipPath = 'inset(0 ' + pct + '% 0 0)';
+}, 150);
+
+// ==================== SOLANA WALLET GATE ====================
+let connectedWallet = null;
+
+function detectWallets() {
+  const hasPhantom = !!(window.solana && window.solana.isPhantom);
+  const hasSolflare = !!(window.solflare && window.solflare.isSolflare);
+  const hasBackpack = !!(window.backpack);
+
+  const sp = document.getElementById('statusPhantom');
+  const ss = document.getElementById('statusSolflare');
+  const sb = document.getElementById('statusBackpack');
+
+  if (sp) { sp.textContent = hasPhantom ? 'Detected' : 'Not Found'; sp.className = 'wallet-status' + (hasPhantom ? ' detected' : ''); }
+  if (ss) { ss.textContent = hasSolflare ? 'Detected' : 'Not Found'; ss.className = 'wallet-status' + (hasSolflare ? ' detected' : ''); }
+  if (sb) { sb.textContent = hasBackpack ? 'Detected' : 'Not Found'; sb.className = 'wallet-status' + (hasBackpack ? ' detected' : ''); }
+}
+
+async function connectWallet(type) {
+  let provider = null;
+
+  try {
+    if (type === 'phantom') {
+      if (window.solana && window.solana.isPhantom) {
+        provider = window.solana;
+      } else {
+        window.open('https://phantom.app/', '_blank');
+        return;
+      }
+    } else if (type === 'solflare') {
+      if (window.solflare && window.solflare.isSolflare) {
+        provider = window.solflare;
+      } else {
+        window.open('https://solflare.com/', '_blank');
+        return;
+      }
+    } else if (type === 'backpack') {
+      if (window.backpack) {
+        provider = window.backpack;
+      } else {
+        window.open('https://backpack.app/', '_blank');
+        return;
+      }
+    } else {
+      // Try any available
+      provider = window.solana || window.solflare || window.backpack || null;
+      if (!provider) {
+        window.open('https://phantom.app/', '_blank');
+        return;
+      }
+    }
+
+    // Animate button
+    const btnMap = { phantom: 'btnPhantom', solflare: 'btnSolflare', backpack: 'btnBackpack', any: 'btnAny' };
+    const btn = document.getElementById(btnMap[type]);
+    if (btn) {
+      btn.style.borderColor = 'var(--purple-bright)';
+      btn.style.opacity = '0.6';
+      btn.querySelector('.wallet-status').textContent = 'Connecting...';
+    }
+
+    const resp = await provider.connect();
+    const pubkey = resp.publicKey.toString();
+
+    connectedWallet = pubkey;
+    unlockVault(pubkey);
+
+  } catch (err) {
+    console.warn('Wallet connection failed:', err);
+    const btnMap = { phantom: 'btnPhantom', solflare: 'btnSolflare', backpack: 'btnBackpack', any: 'btnAny' };
+    const btn = document.getElementById(btnMap[type]);
+    if (btn) {
+      btn.style.borderColor = 'rgba(255,255,255,0.08)';
+      btn.style.opacity = '1';
+      const status = btn.querySelector('.wallet-status');
+      status.textContent = 'Rejected';
+      status.style.color = '#ff3333';
+      setTimeout(() => { status.textContent = '—'; status.style.color = ''; }, 2000);
+    }
+  }
+}
+
+function unlockVault(address) {
+  const gate = document.getElementById('vaultGate');
+  const grid = document.getElementById('vaultGrid');
+  const badge = document.getElementById('vaultBadge');
+  const addrEl = document.getElementById('walletAddr');
+
+  if (gate) gate.classList.add('unlocked');
+  if (grid) { grid.classList.remove('locked'); grid.classList.add('unlocked'); }
+  if (badge) badge.classList.add('show');
+  if (addrEl && address) {
+    addrEl.textContent = address.slice(0, 4) + '...' + address.slice(-4);
+  }
+}
+
+function disconnectWallet() {
+  connectedWallet = null;
+  const gate = document.getElementById('vaultGate');
+  const grid = document.getElementById('vaultGrid');
+  const badge = document.getElementById('vaultBadge');
+
+  if (gate) gate.classList.remove('unlocked');
+  if (grid) { grid.classList.add('locked'); grid.classList.remove('unlocked'); }
+  if (badge) badge.classList.remove('show');
+
+  // Try disconnect from provider
+  try {
+    if (window.solana && window.solana.disconnect) window.solana.disconnect();
+    if (window.solflare && window.solflare.disconnect) window.solflare.disconnect();
+  } catch(e) {}
+
+  detectWallets();
+}
+
+function bypassVault() {
+  unlockVault('DEMO...ACCESS');
+  connectedWallet = 'demo';
+}
+
+// Detect wallets on load
+setTimeout(detectWallets, 500);
+
+// ==================== TICK ANIMATION ====================
+const ticks = document.querySelectorAll('.tick');
+if (ticks.length > 0) {
+  setInterval(() => {
+    ticks.forEach(t => t.classList.remove('active'));
+    const count = 4 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < count; i++) {
+      ticks[Math.floor(Math.random() * ticks.length)].classList.add('active');
+    }
+  }, 800);
+}
+
+// ==================== FOOTER DRAWER ====================
+const footerToggle = document.getElementById('footerToggle');
+const footerDrawer = document.getElementById('footerDrawer');
+
+if (footerToggle && footerDrawer) {
+  footerToggle.addEventListener('click', () => {
+    const isOpen = footerDrawer.classList.toggle('open');
+    footerToggle.classList.toggle('active', isOpen);
+  });
+
+  // Close drawer when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!footerDrawer.contains(e.target) && !footerToggle.contains(e.target)) {
+      footerDrawer.classList.remove('open');
+      footerToggle.classList.remove('active');
+    }
+  });
+
+  // Close drawer on page navigation
+  const origNavigateTo = window.navigateTo;
+  if (typeof origNavigateTo === 'function') {
+    window.navigateTo = function(page) {
+      footerDrawer.classList.remove('open');
+      footerToggle.classList.remove('active');
+      origNavigateTo(page);
+    };
+  }
+}
+</script>
+</body>
+</html>
