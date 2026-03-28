@@ -8,9 +8,9 @@
   @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap');
 
   :root {
-    --purple-deep: #7B2FBE;
-    --purple-mid: #9B3FDF;
-    --purple-bright: #C44DFF;
+    --purple-deep: #5B1F9E;
+    --purple-mid: #7B2FBE;
+    --purple-bright: #A030E8;
     --green-toxic: #00FF41;
     --green-dim: #00cc34;
     --black-deep: #060408;
@@ -1774,7 +1774,7 @@
   scene.add(mainLight);
 
   // Fill light — cool purple from left, prevents total black
-  const fillLight = new THREE.DirectionalLight(0x6633aa, 0.25);
+  const fillLight = new THREE.DirectionalLight(0x4a1f88, 0.35);
   fillLight.position.set(-5, -2, 4);
   scene.add(fillLight);
 
@@ -1784,12 +1784,12 @@
   scene.add(frontFill);
 
   // Under light — eerie uplight for dramatic skull shadows
-  const underLight = new THREE.DirectionalLight(0x4411aa, 0.3);
+  const underLight = new THREE.DirectionalLight(0x330d88, 0.4);
   underLight.position.set(0, -6, 2);
   scene.add(underLight);
 
   // Rim light from behind — purple edge halo
-  const rimLight = new THREE.PointLight(0x8822ee, 1.8, 20);
+  const rimLight = new THREE.PointLight(0x5511cc, 2.2, 20);
   rimLight.position.set(0, 0, -6);
   scene.add(rimLight);
 
@@ -1810,20 +1810,20 @@
   scene.add(spotLight.target);
 
   // Green eye-glow lights — simulates glowing eye sockets like the album cover
-  const eyeGlow1 = new THREE.PointLight(0x00ff41, 3.5, 6);
+  const eyeGlow1 = new THREE.PointLight(0x00ff41, 0.9, 4);
   eyeGlow1.position.set(0.18, 0.12, 1.2);
   scene.add(eyeGlow1);
 
-  const eyeGlow2 = new THREE.PointLight(0x00ee33, 2.8, 5);
+  const eyeGlow2 = new THREE.PointLight(0x00ee33, 0.7, 3.5);
   eyeGlow2.position.set(-0.22, 0.10, 1.0);
   scene.add(eyeGlow2);
 
-  const eyeGlow3 = new THREE.PointLight(0x00ff55, 2.0, 4);
+  const eyeGlow3 = new THREE.PointLight(0x00ff55, 0.5, 3);
   eyeGlow3.position.set(0.05, -0.30, 0.9);
   scene.add(eyeGlow3);
 
   // Deeper cluster glow — ambient green from within the pile
-  const deepGlow = new THREE.PointLight(0x003311, 4.0, 8);
+  const deepGlow = new THREE.PointLight(0x001a08, 1.2, 6);
   deepGlow.position.set(0, 0, -0.5);
   scene.add(deepGlow);
 
@@ -2399,9 +2399,9 @@
 
   const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight),
-    0.45,  // strength — subtle atmospheric glow
-    0.8,   // radius — wide soft bloom
-    0.4    // threshold — only catch highlights
+    0.25,  // strength — subtle atmospheric glow
+    0.6,   // radius — wide soft bloom
+    0.55   // threshold — only catch highlights
   );
   composer.addPass(bloomPass);
 
@@ -2545,7 +2545,7 @@
 
         // Subtle warm-purple color grade in shadows
         float lum = dot(color, vec3(0.299, 0.587, 0.114));
-        vec3 shadowTint = vec3(0.06, 0.02, 0.10);
+        vec3 shadowTint = vec3(0.04, 0.01, 0.14);
         color += shadowTint * (1.0 - lum) * 0.35;
 
         // Slight highlight desaturation for bone realism
@@ -2565,7 +2565,7 @@
   const radialBlurShader = {
     uniforms: {
       tDiffuse: { value: null },
-      uStrength: { value: 0.18 },
+      uStrength: { value: 0.08 },
       uCenter:   { value: new THREE.Vector2(0.5, 0.5) },
       uSamples:  { value: 14.0 },
     },
@@ -2774,7 +2774,7 @@
     spotLight.position.x = Math.sin(t * 0.3) * 0.5;
 
     // Update bloom intensity based on scroll
-    bloomPass.strength = 0.5 + (1 - scrollProgress) * 0.25;
+    bloomPass.strength = 0.32 + (1 - scrollProgress) * 0.10;
 
     // Update fog haze time uniform
     fogHazePass.uniforms.uTime.value = t;
@@ -2785,9 +2785,9 @@
     chromaticPass.uniforms.uIntensity.value = 0.0015 + scrollProgress * 0.002;
 
     // Animate eye glow lights — pulse like breathing embers
-    const eyePulse1 = 3.5 + Math.sin(t * 1.7) * 1.2;
-    const eyePulse2 = 2.8 + Math.sin(t * 2.1 + 1.0) * 1.0;
-    const eyePulse3 = 2.0 + Math.sin(t * 1.4 + 2.5) * 0.8;
+    const eyePulse1 = 0.9 + Math.sin(t * 1.7) * 0.25;
+    const eyePulse2 = 0.7 + Math.sin(t * 2.1 + 1.0) * 0.20;
+    const eyePulse3 = 0.5 + Math.sin(t * 1.4 + 2.5) * 0.15;
     eyeGlow1.intensity = eyePulse1;
     eyeGlow2.intensity = eyePulse2;
     eyeGlow3.intensity = eyePulse3;
