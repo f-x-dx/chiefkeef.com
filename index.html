@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CHIEF SOSA — GLORY BOYZ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap');
 
   :root {
     --purple-deep: #5B1F9E;
@@ -1732,26 +1734,27 @@
 <!-- Footer Toggle Button -->
 <button class="footer-toggle" id="footerToggle" aria-label="Toggle footer">+</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js" defer></script>
 <script>
 // ==================== THREE.JS 3D SKULL CLUSTER ====================
-(function(){
+window.addEventListener('load', function(){(function(){
   const canvas = document.getElementById('skull-canvas');
   const heroSection = document.getElementById('hero');
   if (!canvas) return;
 
   // Three.js setup
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
   renderer.setClearColor(0x060408, 1);
   renderer.setSize(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -2405,15 +2408,15 @@
   );
   composer.addPass(bloomPass);
 
-  // Animated fog/haze layer — drifting noise overlay for atmospheric depth
-  const fogHazeShader = {
+  // Single combined post pass: fog haze + chromatic aberration + vignette + radial blur
+  // Replaces 3 separate ShaderPasses — saves 2 full-screen renders per frame
+  const combinedShader = {
     uniforms: {
-      tDiffuse: { value: null },
-      uTime: { value: 0.0 },
-      uIntensity: { value: 0.12 },
-      uSpeed: { value: 0.08 },
-      uScale: { value: 3.0 },
-      uColor: { value: new THREE.Vector3(0.02, 0.07, 0.03) }
+      tDiffuse:       { value: null },
+      uTime:          { value: 0.0 },
+      uFogIntensity:  { value: 0.10 },
+      uChromatic:     { value: 0.0015 },
+      uRadialStrength:{ value: 0.08 },
     },
     vertexShader: `
       varying vec2 vUv;
@@ -2425,184 +2428,76 @@
     fragmentShader: `
       uniform sampler2D tDiffuse;
       uniform float uTime;
-      uniform float uIntensity;
-      uniform float uSpeed;
-      uniform float uScale;
-      uniform vec3 uColor;
+      uniform float uFogIntensity;
+      uniform float uChromatic;
+      uniform float uRadialStrength;
       varying vec2 vUv;
 
-      // Simplex-style noise via hash
-      vec3 mod289(vec3 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
-      vec2 mod289(vec2 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
-      vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
-
-      float snoise(vec2 v) {
-        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                           -0.577350269189626, 0.024390243902439);
-        vec2 i = floor(v + dot(v, C.yy));
-        vec2 x0 = v - i + dot(i, C.xx);
-        vec2 i1;
-        i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-        vec4 x12 = x0.xyxy + C.xxzz;
-        x12.xy -= i1;
-        i = mod289(i);
-        vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0))
-                + i.x + vec3(0.0, i1.x, 1.0));
-        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
-                dot(x12.zw,x12.zw)), 0.0);
-        m = m*m;
-        m = m*m;
-        vec3 x = 2.0 * fract(p * C.www) - 1.0;
-        vec3 h = abs(x) - 0.5;
-        vec3 ox = floor(x + 0.5);
-        vec3 a0 = x - ox;
-        m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
-        vec3 g;
-        g.x = a0.x * x0.x + h.x * x0.y;
-        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-        return 130.0 * dot(m, g);
+      // Lightweight noise (replaces 4-octave FBM — 2 octaves is enough for fog)
+      vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+      vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}
+      vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}
+      float snoise(vec2 v){
+        const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+        vec2 i=floor(v+dot(v,C.yy)), x0=v-i+dot(i,C.xx);
+        vec2 i1=(x0.x>x0.y)?vec2(1.,0.):vec2(0.,1.);
+        vec4 x12=x0.xyxy+C.xxzz; x12.xy-=i1; i=mod289(i);
+        vec3 p=permute(permute(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));
+        vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);
+        m=m*m; m=m*m;
+        vec3 x=2.*fract(p*C.www)-1., h=abs(x)-.5, ox=floor(x+.5), a0=x-ox;
+        m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);
+        vec3 g; g.x=a0.x*x0.x+h.x*x0.y; g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+        return 130.*dot(m,g);
       }
 
-      float fbm(vec2 p) {
-        float f = 0.0;
-        f += 0.5000 * snoise(p); p *= 2.02;
-        f += 0.2500 * snoise(p); p *= 2.03;
-        f += 0.1250 * snoise(p); p *= 2.01;
-        f += 0.0625 * snoise(p);
-        return f / 0.9375;
-      }
-
-      void main() {
-        vec4 texel = texture2D(tDiffuse, vUv);
-
-        // Two layers of drifting fog at different speeds/scales
-        float t = uTime * uSpeed;
-        vec2 uv1 = vUv * uScale + vec2(t * 0.6, t * 0.3);
-        vec2 uv2 = vUv * uScale * 1.8 + vec2(-t * 0.4, t * 0.5);
-
-        float fog1 = fbm(uv1) * 0.5 + 0.5;
-        float fog2 = fbm(uv2) * 0.5 + 0.5;
-        float fog = fog1 * 0.6 + fog2 * 0.4;
-
-        // Shape fog: thicker at edges, thinner at center
-        vec2 center = vUv - 0.5;
-        float edgeDist = length(center);
-        float edgeMask = smoothstep(0.1, 0.7, edgeDist);
-        fog *= mix(0.2, 1.0, edgeMask);
-
-        // Soft vertical bias — more haze at bottom
-        fog *= mix(0.6, 1.0, 1.0 - vUv.y);
-
-        // Apply fog as an additive haze tinted with uColor
-        vec3 hazeColor = uColor * (1.0 + fog * 0.5);
-        vec3 result = texel.rgb + hazeColor * fog * uIntensity;
-
-        // Slight contrast preservation — don't wash out highlights
-        float lum = dot(texel.rgb, vec3(0.299, 0.587, 0.114));
-        float preserve = smoothstep(0.4, 0.8, lum);
-        result = mix(result, texel.rgb, preserve * 0.5);
-
-        gl_FragColor = vec4(result, texel.a);
-      }
-    `
-  };
-
-  const fogHazePass = new THREE.ShaderPass(fogHazeShader);
-  composer.addPass(fogHazePass);
-
-  // Custom post-processing: chromatic aberration + vignette + subtle color grade
-  const chromaticAberrationShader = {
-    uniforms: {
-      tDiffuse: { value: null },
-      uIntensity: { value: 0.002 },
-      uTime: { value: 0.0 },
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform sampler2D tDiffuse;
-      uniform float uIntensity;
-      uniform float uTime;
-      varying vec2 vUv;
       void main() {
         vec2 center = vUv - 0.5;
         float dist = length(center);
-        float aberration = uIntensity * (1.0 + dist * 3.0) * (1.0 + sin(uTime * 0.4) * 0.1);
         vec2 dir = normalize(center + 0.001);
+
+        // 1. Radial blur (8 samples — down from 14)
+        vec4 radial = vec4(0.0);
+        float total = 0.0;
+        for (float i = 0.0; i < 8.0; i++) {
+          float t = i / 8.0;
+          float w = 1.0 - t * 0.6;
+          radial += texture2D(tDiffuse, vUv - dir * t * uRadialStrength * dist) * w;
+          total += w;
+        }
+        radial /= total;
+        float centerMask = smoothstep(0.0, 0.55, dist);
+        vec4 baseTexel = texture2D(tDiffuse, vUv);
+        vec4 texel = mix(baseTexel, radial, centerMask * 0.85);
+
+        // 2. Chromatic aberration
+        float aberration = uChromatic * (1.0 + dist * 3.0) * (1.0 + sin(uTime * 0.4) * 0.1);
         float r = texture2D(tDiffuse, vUv + dir * aberration).r;
-        float g = texture2D(tDiffuse, vUv).g;
         float b = texture2D(tDiffuse, vUv - dir * aberration).b;
-        vec3 color = vec3(r, g, b);
+        vec3 color = vec3(r, texel.g, b);
 
-        // Vignette — dark edges
-        float vignette = 1.0 - smoothstep(0.3, 0.85, dist);
-        color *= mix(0.25, 1.0, vignette);
+        // 3. Fog haze (2-octave noise — was 4)
+        float t = uTime * 0.08;
+        float fog = (snoise(vUv * 3.0 + vec2(t*0.6, t*0.3)) * 0.65 +
+                     snoise(vUv * 5.4 + vec2(-t*0.4, t*0.5)) * 0.35) * 0.5 + 0.5;
+        fog *= mix(0.2, 1.0, smoothstep(0.1, 0.7, dist));
+        fog *= mix(0.6, 1.0, 1.0 - vUv.y);
+        color += vec3(0.02, 0.07, 0.03) * fog * uFogIntensity;
 
-        // Subtle warm-purple color grade in shadows
+        // 4. Vignette
+        color *= mix(0.25, 1.0, 1.0 - smoothstep(0.3, 0.85, dist));
+
+        // 5. Purple shadow tint + highlight desaturation
         float lum = dot(color, vec3(0.299, 0.587, 0.114));
-        vec3 shadowTint = vec3(0.04, 0.01, 0.14);
-        color += shadowTint * (1.0 - lum) * 0.35;
-
-        // Slight highlight desaturation for bone realism
-        vec3 desat = vec3(lum);
-        float highlightMask = smoothstep(0.5, 0.9, lum);
-        color = mix(color, desat, highlightMask * 0.2);
+        color += vec3(0.04, 0.01, 0.14) * (1.0 - lum) * 0.35;
+        color = mix(color, vec3(lum), smoothstep(0.5, 0.9, lum) * 0.2);
 
         gl_FragColor = vec4(color, 1.0);
       }
     `
   };
-
-  const chromaticPass = new THREE.ShaderPass(chromaticAberrationShader);
-  composer.addPass(chromaticPass);
-
-  // Radial zoom burst — matches the speed-blur radiating from center on the Skeletor cover
-  const radialBlurShader = {
-    uniforms: {
-      tDiffuse: { value: null },
-      uStrength: { value: 0.08 },
-      uCenter:   { value: new THREE.Vector2(0.5, 0.5) },
-      uSamples:  { value: 14.0 },
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform sampler2D tDiffuse;
-      uniform float uStrength;
-      uniform vec2 uCenter;
-      uniform float uSamples;
-      varying vec2 vUv;
-      void main() {
-        vec2 dir = vUv - uCenter;
-        float dist = length(dir);
-        vec4 color = vec4(0.0);
-        float total = 0.0;
-        for (float i = 0.0; i < 14.0; i++) {
-          float t = i / uSamples;
-          float weight = 1.0 - t * 0.6;
-          vec2 offset = dir * t * uStrength * dist;
-          color += texture2D(tDiffuse, vUv - offset) * weight;
-          total += weight;
-        }
-        color /= total;
-        // Preserve center sharply — only blur toward edges
-        float centerMask = smoothstep(0.0, 0.55, dist);
-        gl_FragColor = mix(texture2D(tDiffuse, vUv), color, centerMask * 0.85);
-      }
-    `
-  };
-  const radialBlurPass = new THREE.ShaderPass(radialBlurShader);
-  composer.addPass(radialBlurPass);
+  const combinedPass = new THREE.ShaderPass(combinedShader);
+  composer.addPass(combinedPass);
 
   // Input tracking — cursor on desktop, gyroscope on mobile
   let mouseX = 0, mouseY = 0;
@@ -2698,8 +2593,10 @@
   let smx = 0, smy = 0;
   const startTime = Date.now();
 
+  let frameCount = 0;
   function animate() {
     requestAnimationFrame(animate);
+    frameCount++;
 
     const t = (Date.now() - startTime) / 1000;
 
@@ -2776,25 +2673,19 @@
     // Update bloom intensity based on scroll
     bloomPass.strength = 0.32 + (1 - scrollProgress) * 0.10;
 
-    // Update fog haze time uniform
-    fogHazePass.uniforms.uTime.value = t;
-    fogHazePass.uniforms.uIntensity.value = 0.10 + scrollProgress * 0.06;
+    // Combined post pass — single uniform update
+    combinedPass.uniforms.uTime.value = t;
+    combinedPass.uniforms.uFogIntensity.value = 0.10 + scrollProgress * 0.06;
+    combinedPass.uniforms.uChromatic.value = 0.0015 + scrollProgress * 0.002;
 
-    // Update chromatic aberration time uniform
-    chromaticPass.uniforms.uTime.value = t;
-    chromaticPass.uniforms.uIntensity.value = 0.0015 + scrollProgress * 0.002;
+    // Eye glow pulse
+    eyeGlow1.intensity = 0.9 + Math.sin(t * 1.7) * 0.25;
+    eyeGlow2.intensity = 0.7 + Math.sin(t * 2.1 + 1.0) * 0.20;
+    eyeGlow3.intensity = 0.5 + Math.sin(t * 1.4 + 2.5) * 0.15;
 
-    // Animate eye glow lights — pulse like breathing embers
-    const eyePulse1 = 0.9 + Math.sin(t * 1.7) * 0.25;
-    const eyePulse2 = 0.7 + Math.sin(t * 2.1 + 1.0) * 0.20;
-    const eyePulse3 = 0.5 + Math.sin(t * 1.4 + 2.5) * 0.15;
-    eyeGlow1.intensity = eyePulse1;
-    eyeGlow2.intensity = eyePulse2;
-    eyeGlow3.intensity = eyePulse3;
-
-    // Drift particles slowly around the cluster
+    // Particle drift — every other frame only
     const pts = scene.userData.particles;
-    if (pts) {
+    if (pts && frameCount % 2 === 0) {
       const pos = pts.geometry.attributes.position;
       const init = pts.geometry.userData.initialPositions;
       const spds = pts.geometry.userData.speeds;
@@ -2823,7 +2714,7 @@
   });
 
   animate();
-})();
+})();});
 
 // ==================== CRACKED EARTH BACKGROUND ====================
 (function(){
