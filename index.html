@@ -2538,7 +2538,7 @@ window.addEventListener('load', function(){(function(){
 
   // Desktop: enhanced cursor tracking with depth parallax
   // Only block on mobile (touch-primary) devices, not desktop Chrome which may have DeviceOrientation
-  const isTouchDevice = ('ontouchstart' in window) && (navigator.maxTouchPoints > 1);
+  const isTouchDevice = ('ontouchstart' in window) && (navigator.maxTouchPoints >= 1);
   document.addEventListener('mousemove', (e) => {
     if (isTouchDevice && isGyroActive) return;
     targetX = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -2566,29 +2566,66 @@ window.addEventListener('load', function(){(function(){
 
   function handleGyro(e) {
     if (e.gamma === null && e.beta === null) return;
-    // Require real movement — ignore zero-value DeviceOrientation events from desktop Chrome
     if (!isTouchDevice) return;
     isGyroActive = true;
-    // gamma: left/right tilt (-90 to 90), beta: front/back tilt (-180 to 180)
     if (gyroBaseAlpha === null) {
       gyroBaseAlpha = e.gamma || 0;
       gyroBaseBeta = e.beta || 0;
     }
     var gx = ((e.gamma || 0) - gyroBaseAlpha);
     var gy = ((e.beta || 0) - gyroBaseBeta);
-    // Clamp and normalize to -1..1 range (±30 degrees from rest)
     targetX = Math.max(-1, Math.min(1, gx / 30)) * 2;
     targetY = Math.max(-1, Math.min(1, gy / 30)) * 2;
   }
 
-  // Try to init gyroscope on first touch (for iOS permission)
-  document.addEventListener('touchstart', function gyroInit() {
-    initGyroscope();
-    document.removeEventListener('touchstart', gyroInit);
-  }, { once: true });
+  // Double-tap canvas to recalibrate gyro baseline
+  var lastTap = 0;
+  if (isTouchDevice) {
+    document.addEventListener('touchend', function(e) {
+      var now = Date.now();
+      if (now - lastTap < 300) {
+        gyroBaseAlpha = null;
+        gyroBaseBeta = null;
+      }
+      lastTap = now;
+    });
+  }
 
-  // Also try immediately for Android
-  initGyroscope();
+  // Android: no permission needed, init immediately
+  if (isTouchDevice && !(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function')) {
+    initGyroscope();
+  }
+
+  // iOS 13+: needs explicit user gesture — show a tap prompt after loader clears
+  if (isTouchDevice && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    var gyroPrompt = document.createElement('div');
+    gyroPrompt.id = 'gyro-prompt';
+    gyroPrompt.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:900;font-family:"Space Mono",monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.5);background:rgba(0,0,0,0.4);border:1px solid rgba(196,77,255,0.25);padding:8px 16px;border-radius:2px;pointer-events:auto;cursor:pointer;transition:opacity 0.5s;';
+    gyroPrompt.textContent = '⟳ tap to enable tilt';
+    document.body.appendChild(gyroPrompt);
+
+    gyroPrompt.addEventListener('click', function() {
+      DeviceOrientationEvent.requestPermission().then(function(state) {
+        if (state === 'granted') {
+          window.addEventListener('deviceorientation', handleGyro, true);
+          isGyroActive = true;
+          gyroPrompt.textContent = '✓ tilt active';
+          setTimeout(function() { gyroPrompt.style.opacity = '0'; setTimeout(function() { gyroPrompt.remove(); }, 500); }, 1500);
+        }
+      }).catch(function() {
+        gyroPrompt.style.opacity = '0';
+        setTimeout(function() { gyroPrompt.remove(); }, 500);
+      });
+    });
+
+    // Auto-hide after 6s if not tapped
+    setTimeout(function() {
+      if (gyroPrompt.parentElement) {
+        gyroPrompt.style.opacity = '0';
+        setTimeout(function() { if (gyroPrompt.parentElement) gyroPrompt.remove(); }, 500);
+      }
+    }, 6000);
+  }
 
   // Scroll tracking
   let scrollProgress = 0;
