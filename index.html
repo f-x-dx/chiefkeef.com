@@ -1482,46 +1482,56 @@
   <div class="shop-grid">
     <div class="product-card reveal" style="--delay: 0.1s">
       <div class="product-image">
-        <div class="skull-icon">💀</div>
+        <img src="assets/shop/tee-skull-script.png" alt="Skeletor Skull Script Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
-        <div class="product-name">SKELETOR SKULL HOODIE</div>
-        <div class="product-desc">Heavyweight 400gsm French terry. Oversized fit. Purple stone-washed with skull embroidery.</div>
-        <div class="product-price">$185</div>
+        <div class="product-name">SKELETOR SKULL SCRIPT TEE</div>
+        <div class="product-desc">Washed black heavyweight tee. Script front, skull + barbed wire back graphic.</div>
+        <div class="product-price">$75</div>
         <button class="add-to-cart">Add to Cart</button>
       </div>
     </div>
     <div class="product-card reveal" style="--delay: 0.2s">
       <div class="product-image">
-        <div class="skull-icon">🔮</div>
+        <img src="assets/shop/tee-skull-cluster.png" alt="Skeletor Skull Cluster Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
-        <div class="product-name">ALMIGHTY SO CRYSTAL TEE</div>
-        <div class="product-desc">Vintage distressed wash. Graphic crystal front print. Back script.</div>
-        <div class="product-price">$65</div>
+        <div class="product-name">SKELETOR SKULL CLUSTER TEE</div>
+        <div class="product-desc">Washed black oversized tee. All-over skull cluster back print. GBE chest hit.</div>
+        <div class="product-price">$75</div>
         <button class="add-to-cart">Add to Cart</button>
       </div>
     </div>
     <div class="product-card reveal" style="--delay: 0.3s">
       <div class="product-image">
-        <div class="skull-icon">⛓️</div>
-        <div class="product-sold-out">SOLD OUT</div>
+        <img src="assets/shop/hoodie-barbed.png" alt="Skeletor Barbed Wire Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
-        <div class="product-name">GBE CHAIN PENDANT</div>
-        <div class="product-desc">Sterling silver 925 with purple amethyst inlay. 24" Cuban link.</div>
-        <div class="product-price">$420 <span class="old">$520</span></div>
-        <button class="add-to-cart" style="opacity:0.3; pointer-events:none;">Sold Out</button>
+        <div class="product-name">SKELETOR BARBED WIRE HOODIE</div>
+        <div class="product-desc">Washed black pullover hoodie. Purple barbed wire graphic back. Oversized fit.</div>
+        <div class="product-price">$145</div>
+        <button class="add-to-cart">Add to Cart</button>
       </div>
     </div>
     <div class="product-card reveal" style="--delay: 0.4s">
       <div class="product-image">
-        <div class="skull-icon">🧢</div>
+        <img src="assets/shop/hoodie-skull-script.png" alt="Skeletor Skull Script Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
-        <div class="product-name">GLORY FITTED CAP</div>
-        <div class="product-desc">New Era collab. Blackletter embroidery. Purple underbrim.</div>
-        <div class="product-price">$55</div>
+        <div class="product-name">SKELETOR SKULL SCRIPT HOODIE</div>
+        <div class="product-desc">Washed black heavyweight hoodie. Hand-drawn skull + script back graphic.</div>
+        <div class="product-price">$145</div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card reveal" style="--delay: 0.5s">
+      <div class="product-image">
+        <img src="assets/shop/crew-skull-cluster.png" alt="Skeletor Skull Cluster Crewneck" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div class="product-info">
+        <div class="product-name">SKELETOR SKULL CLUSTER CREW</div>
+        <div class="product-desc">Black crewneck sweatshirt. Skull cluster back print. Chest logo hit. Dropped shoulders.</div>
+        <div class="product-price">$110</div>
         <button class="add-to-cart">Add to Cart</button>
       </div>
     </div>
@@ -2242,26 +2252,12 @@
 
   // Load the GLB model
   (function loadGLBSkull() {
-    const modelData = window.UPLOADED_3D_MODELS && window.UPLOADED_3D_MODELS.find(function(m) {
-      return m.name.indexOf('Meshy_AI') !== -1 || m.name.indexOf('.glb') !== -1;
-    });
-
-    if (!modelData) {
-      console.warn('No GLB model found in UPLOADED_3D_MODELS — activating procedural fallback now');
-      if (!fallbackActivated) {
-        swapSkullGeometry('fallback');
-        hideLoadingOverlay();
-        clearTimeout(fallbackTimer);
-      }
-      return;
-    }
-
     var dracoLoader = new THREE.DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
     var loader = new THREE.GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
-    loader.load(modelData.dataUrl, function(gltf) {
+    loader.load('assets/skull.glb', function(gltf) {
       console.log('GLB skull loaded successfully');
 
       // Merge all geometry from the GLB into one
@@ -2898,7 +2894,7 @@ let audioTrack = null;
 let audioPlaying = false;
 
 function initAudio() {
-  audioTrack = new Audio('assets/hief-Keef-Only-For-The-Night-Official-A_Media_hp8x9eRHD30_008_128k.m4a');
+  audioTrack = new Audio('assets/track.m4a');
   audioTrack.loop = true;
   audioTrack.volume = 0;
 }
