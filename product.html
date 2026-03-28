@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chief Keef — Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --purple-deep:   #7B2FBE;
+      --purple-mid:    #9B3FDF;
+      --purple-bright: #C44DFF;
+      --green-toxic:   #00FF41;
+      --black-deep:    #060408;
+      --black-mid:     #0e0b12;
+      --black-light:   #151018;
+      --white:         #f0f0f0;
+      --gray:          #666;
+      --gray-light:    #999;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      background: var(--black-deep);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      scrollbar-width: thin;
+      scrollbar-color: var(--purple-deep) var(--black-deep);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      background: linear-gradient(to bottom, rgba(6,4,8,0.95), transparent);
+    }
+
+    .nav-wordmark {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 22px;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-wordmark:hover { color: var(--purple-bright); }
+
+    .nav-back {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gray-light);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back::before { content: '←'; font-size: 14px; }
+
+    /* ── PRODUCT LAYOUT ── */
+    .product-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+    }
+
+    /* ── GALLERY ── */
+    .gallery {
+      position: sticky;
+      top: 80px;
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      background: var(--black-mid);
+      overflow: hidden;
+    }
+
+    .gallery-main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+
+    .gallery-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      padding: 40px;
+    }
+
+    .gallery-main img.fade-out {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+
+    .gallery-thumbs {
+      display: flex;
+      gap: 1px;
+      background: var(--black-deep);
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .thumb {
+      flex: 1;
+      aspect-ratio: 1;
+      overflow: hidden;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      background: var(--black-light);
+      max-height: 110px;
+    }
+
+    .thumb.active { opacity: 1; }
+    .thumb:hover { opacity: 0.8; }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transform: scale(1.05);
+    }
+
+    .gallery-label {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gray);
+      pointer-events: none;
+    }
+
+    /* ── PRODUCT INFO ── */
+    .product-info {
+      padding: 60px 56px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow-y: auto;
+    }
+
+    .product-collection {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--purple-bright);
+      margin-bottom: 16px;
+    }
+
+    .product-name {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: clamp(28px, 3.5vw, 48px);
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+
+    .product-price {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 40px;
+      letter-spacing: -0.02em;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin-bottom: 40px;
+    }
+
+    /* Size selector */
+    .size-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gray-light);
+      margin-bottom: 14px;
+    }
+
+    .size-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .size-btn {
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .size-btn:hover {
+      border-color: var(--purple-bright);
+      color: var(--purple-bright);
+    }
+
+    .size-btn.selected {
+      background: var(--purple-bright);
+      border-color: var(--purple-bright);
+      color: #000;
+    }
+
+    .size-btn.sold-out {
+      opacity: 0.25;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    /* CTA */
+    .btn-cart {
+      width: 100%;
+      height: 58px;
+      background: var(--purple-bright);
+      border: none;
+      color: #000;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 12px;
+    }
+
+    .btn-cart:hover { background: var(--purple-mid); color: var(--white); }
+    .btn-cart:active { transform: scale(0.99); }
+
+    .btn-cart.added {
+      background: var(--green-toxic);
+      color: #000;
+    }
+
+    .btn-wishlist {
+      width: 100%;
+      height: 48px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--gray-light);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 48px;
+    }
+
+    .btn-wishlist:hover { border-color: var(--white); color: var(--white); }
+
+    /* Product details accordion */
+    .accordion-item {
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 20px 0;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .accordion-trigger::after {
+      content: '+';
+      font-size: 18px;
+      color: var(--purple-bright);
+      transition: transform 0.3s;
+      font-weight: 400;
+    }
+
+    .accordion-item.open .accordion-trigger::after { transform: rotate(45deg); }
+
+    .accordion-body {
+      font-size: 11px;
+      line-height: 1.8;
+      color: var(--gray-light);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.23, 1, 0.32, 1), padding 0.3s;
+    }
+
+    .accordion-item.open .accordion-body {
+      max-height: 300px;
+      padding-bottom: 24px;
+    }
+
+    /* ── RELATED PRODUCTS ── */
+    .related {
+      grid-column: 1 / -1;
+      padding: 80px 56px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .related-label {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--purple-bright);
+      margin-bottom: 8px;
+    }
+
+    .related-title {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 32px;
+      color: var(--white);
+      margin-bottom: 40px;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .related-card {
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .related-card-img {
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--black-light);
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .related-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .related-card:hover .related-card-img img { transform: scale(1.04); }
+
+    .related-card-name {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .related-card-price {
+      font-size: 12px;
+      color: var(--gray-light);
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+
+      .product-page {
+        grid-template-columns: 1fr;
+        padding-top: 64px;
+      }
+
+      .gallery {
+        position: relative;
+        top: 0;
+        height: auto;
+        aspect-ratio: 1;
+      }
+
+      .product-info {
+        padding: 40px 24px 60px;
+      }
+
+      .related {
+        padding: 60px 24px;
+      }
+
+      .related-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-wordmark">Chief Keef</a>
+  <a href="index.html#shop" class="nav-back">Back to Shop</a>
+</nav>
+
+<div class="product-page" id="productPage">
+
+  <!-- GALLERY -->
+  <div class="gallery">
+    <div class="gallery-main" id="galleryMain">
+      <img id="mainImg" src="" alt="">
+      <span class="gallery-label" id="galleryLabel">Front</span>
+    </div>
+    <div class="gallery-thumbs" id="galleryThumbs"></div>
+  </div>
+
+  <!-- INFO -->
+  <div class="product-info">
+    <div class="product-collection">Skeletor Collection — 2025</div>
+    <h1 class="product-name" id="productName"></h1>
+    <div class="product-price" id="productPrice"></div>
+
+    <div class="divider"></div>
+
+    <div class="size-label">Select Size</div>
+    <div class="size-grid" id="sizeGrid"></div>
+
+    <button class="btn-cart" id="btnCart" onclick="addToCart()">Add to Cart</button>
+    <button class="btn-wishlist">+ Wishlist</button>
+
+    <div class="accordion-item open">
+      <button class="accordion-trigger">Details</button>
+      <div class="accordion-body" id="accordionDetails"></div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-trigger">Sizing & Fit</button>
+      <div class="accordion-body">
+        This style runs true to size with an oversized silhouette. For a more relaxed fit, size up one.
+        Model is 6'1" wearing size Large.<br><br>
+        Chest: Measure around the fullest part of your chest.<br>
+        S: 38–40" · M: 41–43" · L: 44–46" · XL: 47–49" · XXL: 50–52"
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-trigger">Shipping & Returns</button>
+      <div class="accordion-body">
+        Orders ship within 3–5 business days. Standard delivery 5–8 days. Express 2–3 days.<br><br>
+        Returns accepted within 30 days of delivery for unworn items in original condition.
+        Final sale items are not eligible for return.
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATED -->
+  <div class="related">
+    <div class="related-label">Skeletor Collection</div>
+    <div class="related-title">You May Also Want</div>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+
+</div>
+
+<script>
+  // ── Product data ──
+  const PRODUCTS = {
+    'tee-skull-script': {
+      name: 'Skeletor Skull Script Tee',
+      price: '$75',
+      type: 'Tee',
+      images: [
+        { src: 'assets/shop/tee-skull-script-front.png', label: 'Front' },
+        { src: 'assets/shop/tee-skull-script-back.png',  label: 'Back'  },
+      ],
+      sizes: ['XS','S','M','L','XL','XXL'],
+      soldOut: [],
+      details: 'Heavyweight washed black tee. Script "Skeletor / Chief Keef" printed in purple on the front, skull with barbed wire on the back. 100% ringspun cotton, enzyme washed for vintage texture. Dropped shoulders, oversized boxy fit.',
+    },
+    'tee-skull-cluster': {
+      name: 'Skeletor Skull Cluster Tee',
+      price: '$75',
+      type: 'Tee',
+      images: [
+        { src: 'assets/shop/tee-skull-cluster-front.png', label: 'Front' },
+        { src: 'assets/shop/tee-skull-cluster-back.png',  label: 'Back'  },
+      ],
+      sizes: ['XS','S','M','L','XL','XXL'],
+      soldOut: ['XS'],
+      details: 'Washed black oversized tee. Small GBE chest hit on the front, all-over skull cluster graphic printed large across the back. 100% ringspun cotton, acid wash. Dropped shoulder, boxy fit.',
+    },
+    'hoodie-barbed': {
+      name: 'Skeletor Barbed Wire Hoodie',
+      price: '$145',
+      type: 'Hoodie',
+      images: [
+        { src: 'assets/shop/hoodie-barbed-front.png', label: 'Front' },
+        { src: 'assets/shop/hoodie-barbed-back.png',  label: 'Back'  },
+      ],
+      sizes: ['S','M','L','XL','XXL'],
+      soldOut: [],
+      details: '400gsm French terry pullover hoodie. Washed black. Purple barbed wire heart graphic across the back. Ribbed cuffs and hem. Kangaroo pocket. Oversized relaxed fit — size down if you prefer a standard fit.',
+    },
+    'hoodie-skull-script': {
+      name: 'Skeletor Skull Script Hoodie',
+      price: '$145',
+      type: 'Hoodie',
+      images: [
+        { src: 'assets/shop/hoodie-skull-script-front.png', label: 'Front' },
+        { src: 'assets/shop/hoodie-skull-script-back.png',  label: 'Back'  },
+      ],
+      sizes: ['S','M','L','XL','XXL'],
+      soldOut: ['XXL'],
+      details: '400gsm French terry pullover hoodie. Washed black. Hand-rendered skull with script lettering printed on the back. Skeletor / Chief Keef chest logo. Ribbed cuffs, kangaroo pocket, oversized fit.',
+    },
+    'crew-skull-cluster': {
+      name: 'Skeletor Skull Cluster Crew',
+      price: '$110',
+      type: 'Crewneck',
+      images: [
+        { src: 'assets/shop/crew-skull-cluster-front.png', label: 'Front' },
+        { src: 'assets/shop/crew-skull-cluster-back.png',  label: 'Back'  },
+      ],
+      sizes: ['S','M','L','XL','XXL'],
+      soldOut: [],
+      details: '380gsm fleece black crewneck. Chest logo hit on front. Skull cluster graphic printed large on the back. Ribbed neckline, cuffs, and hem. Dropped shoulders. True to size with a slightly relaxed fit.',
+    },
+  };
+
+  // ── Init ──
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id') || 'tee-skull-script';
+  const product = PRODUCTS[id];
+
+  if (!product) {
+    window.location.href = 'index.html#shop';
+  }
+
+  // Set page title
+  document.title = `Chief Keef — ${product.name}`;
+
+  // Populate name + price
+  document.getElementById('productName').textContent = product.name;
+  document.getElementById('productPrice').textContent = product.price;
+  document.getElementById('accordionDetails').textContent = product.details;
+
+  // ── Gallery ──
+  let currentImg = 0;
+
+  function setImage(idx) {
+    const mainImg = document.getElementById('mainImg');
+    const label = document.getElementById('galleryLabel');
+    mainImg.classList.add('fade-out');
+    setTimeout(() => {
+      mainImg.src = product.images[idx].src;
+      mainImg.alt = product.images[idx].label;
+      label.textContent = product.images[idx].label;
+      mainImg.classList.remove('fade-out');
+      currentImg = idx;
+      document.querySelectorAll('.thumb').forEach((t, i) => {
+        t.classList.toggle('active', i === idx);
+      });
+    }, 200);
+  }
+
+  // Main image
+  const mainImg = document.getElementById('mainImg');
+  mainImg.src = product.images[0].src;
+  mainImg.alt = product.images[0].label;
+
+  // Thumbnails
+  const thumbsEl = document.getElementById('galleryThumbs');
+  product.images.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb' + (i === 0 ? ' active' : '');
+    div.innerHTML = `<img src="${img.src}" alt="${img.label}">`;
+    div.addEventListener('click', () => setImage(i));
+    thumbsEl.appendChild(div);
+  });
+
+  // Click main image to cycle
+  document.getElementById('galleryMain').addEventListener('click', () => {
+    setImage((currentImg + 1) % product.images.length);
+  });
+
+  // ── Sizes ──
+  let selectedSize = null;
+  const sizeGrid = document.getElementById('sizeGrid');
+  product.sizes.forEach(size => {
+    const btn = document.createElement('button');
+    btn.className = 'size-btn' + (product.soldOut.includes(size) ? ' sold-out' : '');
+    btn.textContent = size;
+    btn.disabled = product.soldOut.includes(size);
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSize = size;
+    });
+    sizeGrid.appendChild(btn);
+  });
+
+  // ── Add to cart ──
+  function addToCart() {
+    if (!selectedSize) {
+      sizeGrid.style.outline = '1px solid var(--purple-bright)';
+      setTimeout(() => sizeGrid.style.outline = '', 1200);
+      return;
+    }
+    const btn = document.getElementById('btnCart');
+    btn.textContent = '✓  Added';
+    btn.classList.add('added');
+    setTimeout(() => {
+      btn.textContent = 'Add to Cart';
+      btn.classList.remove('added');
+    }, 2500);
+  }
+
+  // ── Accordion ──
+  document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const item = trigger.closest('.accordion-item');
+      item.classList.toggle('open');
+    });
+  });
+
+  // ── Related products ──
+  const relatedGrid = document.getElementById('relatedGrid');
+  const others = Object.entries(PRODUCTS).filter(([k]) => k !== id);
+  // Show up to 4
+  others.slice(0, 4).forEach(([key, p]) => {
+    const a = document.createElement('a');
+    a.className = 'related-card';
+    a.href = `product.html?id=${key}`;
+    a.innerHTML = `
+      <div class="related-card-img">
+        <img src="${p.images[0].src}" alt="${p.name}">
+      </div>
+      <div class="related-card-name">${p.name}</div>
+      <div class="related-card-price">${p.price}</div>
+    `;
+    relatedGrid.appendChild(a);
+  });
+</script>
+</body>
+</html>

@@ -1480,61 +1480,61 @@
     <h2 class="section-title">Glory <span class="accent">Shop</span></h2>
   </div>
   <div class="shop-grid">
-    <div class="product-card reveal" style="--delay: 0.1s">
+    <a class="product-card reveal" href="product.html?id=tee-skull-script" style="--delay: 0.1s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/tee-skull-script.png" alt="Skeletor Skull Script Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/tee-skull-script-front.png" alt="Skeletor Skull Script Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL SCRIPT TEE</div>
         <div class="product-desc">Washed black heavyweight tee. Script front, skull + barbed wire back graphic.</div>
         <div class="product-price">$75</div>
-        <button class="add-to-cart">Add to Cart</button>
+        <button class="add-to-cart" onclick="event.preventDefault()">View Product</button>
       </div>
-    </div>
-    <div class="product-card reveal" style="--delay: 0.2s">
+    </a>
+    <a class="product-card reveal" href="product.html?id=tee-skull-cluster" style="--delay: 0.2s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/tee-skull-cluster.png" alt="Skeletor Skull Cluster Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/tee-skull-cluster-front.png" alt="Skeletor Skull Cluster Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL CLUSTER TEE</div>
         <div class="product-desc">Washed black oversized tee. All-over skull cluster back print. GBE chest hit.</div>
         <div class="product-price">$75</div>
-        <button class="add-to-cart">Add to Cart</button>
+        <button class="add-to-cart" onclick="event.preventDefault()">View Product</button>
       </div>
-    </div>
-    <div class="product-card reveal" style="--delay: 0.3s">
+    </a>
+    <a class="product-card reveal" href="product.html?id=hoodie-barbed" style="--delay: 0.3s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/hoodie-barbed.png" alt="Skeletor Barbed Wire Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/hoodie-barbed-front.png" alt="Skeletor Barbed Wire Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR BARBED WIRE HOODIE</div>
         <div class="product-desc">Washed black pullover hoodie. Purple barbed wire graphic back. Oversized fit.</div>
         <div class="product-price">$145</div>
-        <button class="add-to-cart">Add to Cart</button>
+        <button class="add-to-cart" onclick="event.preventDefault()">View Product</button>
       </div>
-    </div>
-    <div class="product-card reveal" style="--delay: 0.4s">
+    </a>
+    <a class="product-card reveal" href="product.html?id=hoodie-skull-script" style="--delay: 0.4s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/hoodie-skull-script.png" alt="Skeletor Skull Script Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/hoodie-skull-script-front.png" alt="Skeletor Skull Script Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL SCRIPT HOODIE</div>
         <div class="product-desc">Washed black heavyweight hoodie. Hand-drawn skull + script back graphic.</div>
         <div class="product-price">$145</div>
-        <button class="add-to-cart">Add to Cart</button>
+        <button class="add-to-cart" onclick="event.preventDefault()">View Product</button>
       </div>
-    </div>
-    <div class="product-card reveal" style="--delay: 0.5s">
+    </a>
+    <a class="product-card reveal" href="product.html?id=crew-skull-cluster" style="--delay: 0.5s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/crew-skull-cluster.png" alt="Skeletor Skull Cluster Crewneck" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/crew-skull-cluster-front.png" alt="Skeletor Skull Cluster Crewneck" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL CLUSTER CREW</div>
         <div class="product-desc">Black crewneck sweatshirt. Skull cluster back print. Chest logo hit. Dropped shoulders.</div>
         <div class="product-price">$110</div>
-        <button class="add-to-cart">Add to Cart</button>
+        <button class="add-to-cart" onclick="event.preventDefault()">View Product</button>
       </div>
-    </div>
+    </a>
   </div>
 </section>
 </div><!-- /page-shop -->
@@ -1808,6 +1808,24 @@
   spotLight.target.position.set(0, 0, 0);
   scene.add(spotLight);
   scene.add(spotLight.target);
+
+  // Green eye-glow lights — simulates glowing eye sockets like the album cover
+  const eyeGlow1 = new THREE.PointLight(0x00ff41, 3.5, 6);
+  eyeGlow1.position.set(0.18, 0.12, 1.2);
+  scene.add(eyeGlow1);
+
+  const eyeGlow2 = new THREE.PointLight(0x00ee33, 2.8, 5);
+  eyeGlow2.position.set(-0.22, 0.10, 1.0);
+  scene.add(eyeGlow2);
+
+  const eyeGlow3 = new THREE.PointLight(0x00ff55, 2.0, 4);
+  eyeGlow3.position.set(0.05, -0.30, 0.9);
+  scene.add(eyeGlow3);
+
+  // Deeper cluster glow — ambient green from within the pile
+  const deepGlow = new THREE.PointLight(0x003311, 4.0, 8);
+  deepGlow.position.set(0, 0, -0.5);
+  scene.add(deepGlow);
 
   // Procedural bone texture generator
   function generateBoneTexture(size, hueShift) {
@@ -2195,6 +2213,42 @@
     });
   }
 
+  // Floating dust particles — atmospheric debris like the album cover
+  (function createParticles() {
+    const count = 320;
+    const positions = new Float32Array(count * 3);
+    const sizes = new Float32Array(count);
+    const speeds = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      const r = 0.4 + Math.random() * 2.8;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = r * Math.cos(phi) - 0.5;
+      sizes[i] = 0.008 + Math.random() * 0.022;
+      speeds[i] = 0.15 + Math.random() * 0.35;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    geo.userData.speeds = speeds;
+    geo.userData.initialPositions = positions.slice();
+
+    const mat = new THREE.PointsMaterial({
+      color: 0x88aaff,
+      size: 0.018,
+      transparent: true,
+      opacity: 0.45,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      sizeAttenuation: true,
+    });
+    const particles = new THREE.Points(geo, mat);
+    scene.add(particles);
+    scene.userData.particles = particles;
+  })();
+
   // Swap in real skull geometry with staggered pop-in
   let fallbackActivated = false;
   function swapSkullGeometry(geoSource) {
@@ -2507,6 +2561,49 @@
   const chromaticPass = new THREE.ShaderPass(chromaticAberrationShader);
   composer.addPass(chromaticPass);
 
+  // Radial zoom burst — matches the speed-blur radiating from center on the Skeletor cover
+  const radialBlurShader = {
+    uniforms: {
+      tDiffuse: { value: null },
+      uStrength: { value: 0.18 },
+      uCenter:   { value: new THREE.Vector2(0.5, 0.5) },
+      uSamples:  { value: 14.0 },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D tDiffuse;
+      uniform float uStrength;
+      uniform vec2 uCenter;
+      uniform float uSamples;
+      varying vec2 vUv;
+      void main() {
+        vec2 dir = vUv - uCenter;
+        float dist = length(dir);
+        vec4 color = vec4(0.0);
+        float total = 0.0;
+        for (float i = 0.0; i < 14.0; i++) {
+          float t = i / uSamples;
+          float weight = 1.0 - t * 0.6;
+          vec2 offset = dir * t * uStrength * dist;
+          color += texture2D(tDiffuse, vUv - offset) * weight;
+          total += weight;
+        }
+        color /= total;
+        // Preserve center sharply — only blur toward edges
+        float centerMask = smoothstep(0.0, 0.55, dist);
+        gl_FragColor = mix(texture2D(tDiffuse, vUv), color, centerMask * 0.85);
+      }
+    `
+  };
+  const radialBlurPass = new THREE.ShaderPass(radialBlurShader);
+  composer.addPass(radialBlurPass);
+
   // Input tracking — cursor on desktop, gyroscope on mobile
   let mouseX = 0, mouseY = 0;
   let targetX = 0, targetY = 0;
@@ -2686,6 +2783,30 @@
     // Update chromatic aberration time uniform
     chromaticPass.uniforms.uTime.value = t;
     chromaticPass.uniforms.uIntensity.value = 0.0015 + scrollProgress * 0.002;
+
+    // Animate eye glow lights — pulse like breathing embers
+    const eyePulse1 = 3.5 + Math.sin(t * 1.7) * 1.2;
+    const eyePulse2 = 2.8 + Math.sin(t * 2.1 + 1.0) * 1.0;
+    const eyePulse3 = 2.0 + Math.sin(t * 1.4 + 2.5) * 0.8;
+    eyeGlow1.intensity = eyePulse1;
+    eyeGlow2.intensity = eyePulse2;
+    eyeGlow3.intensity = eyePulse3;
+
+    // Drift particles slowly around the cluster
+    const pts = scene.userData.particles;
+    if (pts) {
+      const pos = pts.geometry.attributes.position;
+      const init = pts.geometry.userData.initialPositions;
+      const spds = pts.geometry.userData.speeds;
+      for (let i = 0; i < pos.count; i++) {
+        const sp = spds[i];
+        pos.setX(i, init[i*3]   + Math.sin(t * sp + i) * 0.12);
+        pos.setY(i, init[i*3+1] + Math.cos(t * sp * 0.7 + i * 1.3) * 0.10);
+        pos.setZ(i, init[i*3+2] + Math.sin(t * sp * 0.5 + i * 0.8) * 0.08);
+      }
+      pos.needsUpdate = true;
+      pts.rotation.y = t * 0.04;
+    }
 
     composer.render();
   }
