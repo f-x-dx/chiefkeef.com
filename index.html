@@ -1424,9 +1424,111 @@
     transition: clip-path 0.25s ease-out;
     filter: drop-shadow(0 0 20px rgba(155, 63, 223, 0.4));
   }
+
+  /* ===== Site Gate ===== */
+  #site-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #060408;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #site-gate.unlocked {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  #site-gate-title {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: clamp(36px, 8vw, 72px);
+    color: #fff;
+    margin: 0 0 8px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 40px rgba(160, 48, 232, 0.6);
+  }
+  #site-gate-sub {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin: 0 0 40px;
+  }
+  #site-gate-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: min(320px, 90vw);
+  }
+  #site-gate-input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(160,48,232,0.3);
+    border-radius: 4px;
+    padding: 14px 18px;
+    color: #fff;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+  }
+  #site-gate-input:focus {
+    border-color: rgba(160,48,232,0.8);
+  }
+  #site-gate-input.error {
+    border-color: #ff4444;
+    animation: gateShake 0.3s ease;
+  }
+  @keyframes gateShake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  #site-gate-btn {
+    width: 100%;
+    background: var(--purple-bright);
+    border: none;
+    border-radius: 4px;
+    padding: 14px;
+    color: #fff;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+  }
+  #site-gate-btn:hover { background: var(--purple-mid); }
+  #site-gate-btn:active { transform: scale(0.98); }
+  #site-gate-error {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #ff4444;
+    text-transform: uppercase;
+    height: 14px;
+  }
 </style>
 </head>
 <body>
+
+<!-- Site Gate -->
+<div id="site-gate">
+  <div id="site-gate-title">CHIEF SOSA</div>
+  <div id="site-gate-sub">Preview Access</div>
+  <div id="site-gate-form">
+    <input id="site-gate-input" type="password" placeholder="enter password" autocomplete="off" />
+    <div id="site-gate-error"></div>
+    <button id="site-gate-btn" onclick="siteGateSubmit()">Enter</button>
+  </div>
+</div>
 
 <!-- Loading Screen -->
 <div class="loader" id="loader">
@@ -3312,6 +3414,33 @@ if (footerToggle && footerDrawer) {
     };
   }
 }
+
+/* ===== Site Gate ===== */
+(function() {
+  if (localStorage.getItem('ck-preview-access') === '1') {
+    const g = document.getElementById('site-gate');
+    if (g) g.classList.add('unlocked');
+  }
+})();
+
+function siteGateSubmit() {
+  const input = document.getElementById('site-gate-input');
+  const errEl = document.getElementById('site-gate-error');
+  if (input.value === '$osa') {
+    localStorage.setItem('ck-preview-access', '1');
+    document.getElementById('site-gate').classList.add('unlocked');
+  } else {
+    input.classList.add('error');
+    errEl.textContent = 'Wrong password';
+    setTimeout(() => { input.classList.remove('error'); errEl.textContent = ''; }, 800);
+    input.value = '';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.getElementById('site-gate-input');
+  if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') siteGateSubmit(); });
+});
 </script>
 </body>
 </html>
