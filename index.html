@@ -2510,16 +2510,21 @@ window.addEventListener('load', function(){(function(){
   })();
 
   // Post-processing — UnrealBloomPass + Chromatic Aberration
-  const composer = new THREE.EffectComposer(renderer);
+  // Skipped on mobile: UnrealBloomPass uses half-float render targets unsupported on iOS Safari
+  let composer = null, bloomPass = null, combinedPass = null;
+  if (!isMobile) {
+  const _composer = new THREE.EffectComposer(renderer);
+  composer = _composer;
   const renderPass = new THREE.RenderPass(scene, camera);
   composer.addPass(renderPass);
 
-  const bloomPass = new THREE.UnrealBloomPass(
+  const _bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight),
     0.25,  // strength — subtle atmospheric glow
     0.6,   // radius — wide soft bloom
     0.55   // threshold — only catch highlights
   );
+  bloomPass = _bloomPass;
   composer.addPass(bloomPass);
 
   // Single combined post pass: fog haze + chromatic aberration + vignette + radial blur
@@ -2610,8 +2615,9 @@ window.addEventListener('load', function(){(function(){
       }
     `
   };
-  const combinedPass = new THREE.ShaderPass(combinedShader);
+  combinedPass = new THREE.ShaderPass(combinedShader);
   composer.addPass(combinedPass);
+  } // end !isMobile post-processing
 
   // Input tracking — cursor on desktop, gyroscope on mobile
   let mouseX = 0, mouseY = 0;
@@ -2810,13 +2816,13 @@ window.addEventListener('load', function(){(function(){
     // Spotlight subtle sway
     spotLight.position.x = Math.sin(t * 0.3) * 0.5;
 
-    // Update bloom intensity based on scroll
-    bloomPass.strength = 0.32 + (1 - scrollProgress) * 0.10;
-
-    // Combined post pass — single uniform update
-    combinedPass.uniforms.uTime.value = t;
-    combinedPass.uniforms.uFogIntensity.value = 0.10 + scrollProgress * 0.06;
-    combinedPass.uniforms.uChromatic.value = 0.0015 + scrollProgress * 0.002;
+    // Update bloom intensity based on scroll (desktop only)
+    if (bloomPass) bloomPass.strength = 0.32 + (1 - scrollProgress) * 0.10;
+    if (combinedPass) {
+      combinedPass.uniforms.uTime.value = t;
+      combinedPass.uniforms.uFogIntensity.value = 0.10 + scrollProgress * 0.06;
+      combinedPass.uniforms.uChromatic.value = 0.0015 + scrollProgress * 0.002;
+    }
 
     // Eye glow pulse
     eyeGlow1.intensity = 0.9 + Math.sin(t * 1.7) * 0.25;
@@ -2839,7 +2845,7 @@ window.addEventListener('load', function(){(function(){
       pts.rotation.y = t * 0.04;
     }
 
-    composer.render();
+    if (composer) { composer.render(); } else { renderer.render(scene, camera); }
   }
 
   // Handle resize + orientation change
@@ -2848,8 +2854,8 @@ window.addEventListener('load', function(){(function(){
     const h = canvas.parentElement.offsetHeight || window.innerHeight;
     if (w === 0 || h === 0) return;
     renderer.setSize(w, h);
-    composer.setSize(w, h);
-    bloomPass.resolution.set(w, h);
+    if (composer) { composer.setSize(w, h); }
+    if (bloomPass) { bloomPass.resolution.set(w, h); }
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
