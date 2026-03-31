@@ -49,6 +49,7 @@
     overflow: hidden;
     cursor: default;
     height: 100vh;
+    height: 100dvh;
   }
 
   /* ===== SPA Page System ===== */
@@ -65,6 +66,8 @@
     z-index: 1;
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
     scrollbar-width: thin;
     scrollbar-color: var(--purple-deep) var(--black-deep);
   }
@@ -355,6 +358,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -1272,9 +1276,9 @@
       display: block;
     }
     .nav-corner a {
-      font-size: 8px;
+      font-size: 13px;
       letter-spacing: 2px;
-      padding: 4px 6px;
+      padding: 6px 8px;
     }
     .nav-corner--tl { top: 20px; left: 16px; }
     .nav-corner--tr { top: 20px; right: 16px; }
@@ -1342,7 +1346,25 @@
     /* Vault gate legible on small screens */
     .vault-gate-title { font-size: 22px; }
     .vault-gate-sub { font-size: 12px; }
+    /* Nav corners: reduce size on smallest screens */
+    .nav-corner a {
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 4px 6px;
+    }
     .vault-lock-icon { width: 60px; height: 60px; }
+    /* Vault overlay: switch to normal flow on mobile so it scrolls naturally */
+    .vault-gate { min-height: 0; }
+    .vault-gate-overlay {
+      position: relative;
+      height: auto;
+      min-height: 0;
+      padding: 40px 20px 60px;
+      justify-content: flex-start;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: rgba(6, 4, 8, 0.98);
+    }
   }
 
   /* Canvas for 3D skull cluster */
@@ -1456,51 +1478,8 @@
 </div><!-- /page-home -->
 
 <!-- ===== PAGE: MUSIC ===== -->
-<div class="page" id="page-music">
-<section class="section" id="music">
-  <div class="reveal">
-    <div class="section-label">Latest Drops</div>
-    <h2 class="section-title">New <span class="accent">Music</span></h2>
-  </div>
-  <div class="music-feed">
-    <div class="music-card reveal" style="--delay: 0.1s">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a0a2e 0%, #3d1a78 50%, #1a0a2e 100%);" class="music-card-image"></div>
-      <div class="music-card-play"></div>
-      <div class="music-card-content">
-        <span class="music-card-tag">New Single</span>
-        <div class="music-card-title">Hadouken</div>
-        <div class="music-card-sub">Official Music Video — Jan 2026</div>
-      </div>
-    </div>
-    <div class="music-card reveal" style="--delay: 0.2s">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg, #0a0a0a 0%, #2d0a4e 50%, #0a0a0a 100%);" class="music-card-image"></div>
-      <div class="music-card-play"></div>
-      <div class="music-card-content">
-        <span class="music-card-tag">Album</span>
-        <div class="music-card-title">Almighty So 2</div>
-        <div class="music-card-sub">Full Length — Streaming Now</div>
-      </div>
-    </div>
-    <div class="music-card reveal" style="--delay: 0.3s">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg, #0d1a0d 0%, #1a3d1a 50%, #0d1a0d 100%);" class="music-card-image"></div>
-      <div class="music-card-play"></div>
-      <div class="music-card-content">
-        <span class="music-card-tag">Video</span>
-        <div class="music-card-title">Racks Gone</div>
-        <div class="music-card-sub">Directed by Cole Bennett — Dec 2025</div>
-      </div>
-    </div>
-    <div class="music-card reveal" style="--delay: 0.4s">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a0a0a 0%, #4a1a1a 50%, #1a0a0a 100%);" class="music-card-image"></div>
-      <div class="music-card-play"></div>
-      <div class="music-card-content">
-        <span class="music-card-tag">Feature</span>
-        <div class="music-card-title">OBlock 4Ever</div>
-        <div class="music-card-sub">ft. Lil Durk — Nov 2025</div>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="page page--hero" id="page-music">
+  <iframe src="https://symphony.to/chief-keef-3/n1vdxiqhyvff" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen></iframe>
 </div><!-- /page-music -->
 
 <!-- ===== PAGE: SHOP ===== -->
@@ -1745,7 +1724,7 @@
   <div class="footer-drawer-inner">
     <ul class="footer-drawer-socials">
       <li><a href="https://open.spotify.com/artist/15iVAtD3s3FsQR4w1v6M0T" target="_blank" rel="noopener" aria-label="Spotify"><svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a></li>
-      <li><a href="https://music.apple.com/us/artist/chief-keef/527259577" target="_blank" rel="noopener" aria-label="Apple Music"><svg viewBox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043A5.022 5.022 0 0019.7.165C18.82.036 17.94-.004 17.05.001 14.7.009 12.35.009 10 .009c-2.31 0-4.63-.004-6.95.006C2.14.02 1.29.07.48.3A4.96 4.96 0 00.025 2.47c-.03.91-.04 1.82-.025 2.73.01 2.33.01 4.66 0 6.99-.004.94.01 1.87.06 2.81.077 1.32.498 2.5 1.4 3.47.672.73 1.5 1.2 2.46 1.42.66.15 1.33.21 2 .22 2.37.03 4.74.02 7.11.02 2.34 0 4.68.01 7.02-.02.9-.01 1.8-.08 2.67-.36 1.31-.42 2.28-1.2 2.95-2.38.47-.83.67-1.74.72-2.68.05-.95.06-1.9.06-2.86-.01-2.29-.01-4.58 0-6.87v-.04zM16.87 16.3c-.04.13-.1.26-.18.36-.47.56-1.23.56-1.76.08a1.4 1.4 0 01-.38-.56c-.08-.24-.13-.48-.15-.73-.04-.69 0-1.38-.02-2.08 0-.18-.02-.36-.08-.53-.13-.35-.4-.5-.76-.47-.32.03-.56.2-.68.5-.08.2-.11.41-.11.63-.01.73 0 1.46-.01 2.19 0 .24-.03.48-.1.71-.12.41-.42.65-.83.69-.46.05-.83-.16-.99-.57-.07-.19-.1-.39-.1-.59.01-.76.02-1.52 0-2.29 0-.2-.03-.41-.1-.6-.14-.35-.42-.5-.78-.47-.32.04-.55.21-.67.51-.07.18-.1.37-.1.56-.01.75 0 1.5-.01 2.25 0 .21-.02.42-.09.62-.14.43-.5.68-.93.68-.43 0-.77-.26-.9-.67-.05-.18-.07-.37-.07-.56 0-2.12 0-4.24.01-6.35 0-.2.02-.41.08-.6.14-.42.5-.66.92-.67.42 0 .78.24.92.65.04.12.07.25.07.38.01.38 0 .76 0 1.14 0 .04.01.08.02.15.11-.12.19-.23.29-.32.47-.42 1.02-.55 1.63-.42.52.11.93.39 1.22.84.03.05.07.08.12.06a1.88 1.88 0 011.63-.87c.7-.02 1.27.27 1.67.84.02.03.05.06.1.06.37-.55.87-.83 1.51-.89.76-.08 1.38.2 1.81.83.21.31.32.66.35 1.04.04.46.03.93.03 1.39 0 .54.01 1.08-.02 1.62-.01.24-.05.48-.13.71z"/></svg></a></li>
+      <li><a href="https://music.apple.com/us/artist/chief-keef/527259577" target="_blank" rel="noopener" aria-label="Apple Music"><svg viewBox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.029 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg></a></li>
       <li><a href="https://www.youtube.com/@ChiefKeef" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></li>
       <li><a href="https://x.com/chiefkeef" target="_blank" rel="noopener" aria-label="X / Twitter"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.733-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a></li>
       <li><a href="https://www.instagram.com/chiefkeef" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a></li>
@@ -2551,8 +2530,8 @@ window.addEventListener('load', function(){(function(){
       // iOS 13+ requires permission
       DeviceOrientationEvent.requestPermission().then(function(state) {
         if (state === 'granted') {
+          isGyroActive = true; // set BEFORE attaching listener to avoid race
           window.addEventListener('deviceorientation', handleGyro, true);
-          isGyroActive = true;
         }
       }).catch(function() {});
     } else if ('DeviceOrientationEvent' in window) {
@@ -2596,35 +2575,20 @@ window.addEventListener('load', function(){(function(){
     initGyroscope();
   }
 
-  // iOS 13+: needs explicit user gesture — show a tap prompt after loader clears
+  // iOS 13+: auto-request on first touch after loader is gone
   if (isTouchDevice && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    var gyroPrompt = document.createElement('div');
-    gyroPrompt.id = 'gyro-prompt';
-    gyroPrompt.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:900;font-family:"Space Mono",monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.5);background:rgba(0,0,0,0.4);border:1px solid rgba(196,77,255,0.25);padding:8px 16px;border-radius:2px;pointer-events:auto;cursor:pointer;transition:opacity 0.5s;';
-    gyroPrompt.textContent = '⟳ tap to enable tilt';
-    document.body.appendChild(gyroPrompt);
-
-    gyroPrompt.addEventListener('click', function() {
+    document.addEventListener('touchstart', function requestGyroOnce() {
+      // Don't interrupt the loader — wait until it's hidden
+      const loader = document.getElementById('loader');
+      if (loader && !loader.classList.contains('hidden')) return;
       DeviceOrientationEvent.requestPermission().then(function(state) {
         if (state === 'granted') {
-          window.addEventListener('deviceorientation', handleGyro, true);
           isGyroActive = true;
-          gyroPrompt.textContent = '✓ tilt active';
-          setTimeout(function() { gyroPrompt.style.opacity = '0'; setTimeout(function() { gyroPrompt.remove(); }, 500); }, 1500);
+          window.addEventListener('deviceorientation', handleGyro, true);
         }
-      }).catch(function() {
-        gyroPrompt.style.opacity = '0';
-        setTimeout(function() { gyroPrompt.remove(); }, 500);
-      });
-    });
-
-    // Auto-hide after 6s if not tapped
-    setTimeout(function() {
-      if (gyroPrompt.parentElement) {
-        gyroPrompt.style.opacity = '0';
-        setTimeout(function() { if (gyroPrompt.parentElement) gyroPrompt.remove(); }, 500);
-      }
-    }, 6000);
+      }).catch(function() {});
+      document.removeEventListener('touchstart', requestGyroOnce);
+    }, { once: false });
   }
 
   // Scroll tracking
@@ -2774,16 +2738,33 @@ window.addEventListener('load', function(){(function(){
     composer.render();
   }
 
-  // Handle resize
-  window.addEventListener('resize', () => {
-    const w = canvas.parentElement.offsetWidth;
-    const h = canvas.parentElement.offsetHeight;
+  // Handle resize + orientation change
+  function onResize() {
+    const w = canvas.parentElement.offsetWidth || window.innerWidth;
+    const h = canvas.parentElement.offsetHeight || window.innerHeight;
+    if (w === 0 || h === 0) return;
     renderer.setSize(w, h);
     composer.setSize(w, h);
     bloomPass.resolution.set(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+
+  let orientationTimeout = null;
+  window.addEventListener('orientationchange', function() {
+    clearTimeout(orientationTimeout);
+    // Reset gyro baseline so tilt re-calibrates to new orientation
+    gyroBaseAlpha = null;
+    gyroBaseBeta = null;
+    // Reset smoothed input so camera doesn't snap
+    mouseX = 0; mouseY = 0; targetX = 0; targetY = 0; smx = 0; smy = 0;
+    orientationTimeout = setTimeout(onResize, 350);
   });
+
+  // WebGL context loss/restore (iOS kills context on permission dialogs, backgrounding, etc.)
+  canvas.addEventListener('webglcontextlost', function(e) { e.preventDefault(); }, false);
+  canvas.addEventListener('webglcontextrestored', function() { renderer.resetState(); }, false);
 
   animate();
 })();});
@@ -2971,6 +2952,7 @@ window.addEventListener('load', function(){(function(){
 
   resizeCE();
   window.addEventListener('resize', resizeCE);
+  window.addEventListener('orientationchange', function() { setTimeout(resizeCE, 350); });
 })();
 
 // ==================== AUDIO (TRACK PLAYER) ====================
