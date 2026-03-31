@@ -158,6 +158,238 @@ vercel login
 
 ---
 
+## Shopify Headless Integration (Next Step)
+
+The shop page currently has 5 static cards hardcoded in `index.html`. The next phase connects the existing Chief Keef Shopify store as a headless backend — products, inventory, and checkout all come from Shopify, rendered in the existing Three.js/purple UI.
+
+### Architecture
+
+No build step, no framework. The site stays vanilla JS. Shopify is accessed entirely via the **Storefront API** (GraphQL over `fetch()`). The Storefront API access token is a public credential — intentionally client-safe.
+
+```
+Browser → Shopify Storefront API (GraphQL)
+                ↓
+        fetch products → render cards
+        add to cart   → create checkout → redirect to Shopify checkout URL
+```
+
+Shopify owns the checkout page. No payment handling in this codebase.
+
+---
+
+### Step 1 — Get the Storefront API Token
+
+1. Log in to the Chief Keef Shopify admin
+2. Go to **Settings → Apps and sales channels → Develop apps**
+3. Create a new app (e.g. `chiefkeef-headless`)
+4. Under **API credentials → Storefront API**, enable these scopes:
+   - `unauthenticated_read_product_listings`
+   - `unauthenticated_read_product_inventory`
+   - `unauthenticated_write_checkouts`
+   - `unauthenticated_read_checkouts`
+5. Copy the **Storefront API access token** — this is a public token, safe to ship in client JS
+
+---
+
+### Step 2 — Add Config to index.html
+
+Add these constants near the top of the inline `<script>` block:
+
+```js
+const SHOPIFY_DOMAIN   = 'chiefkeef.myshopify.com';  // your .myshopify.com domain
+const SHOPIFY_TOKEN    = 'YOUR_STOREFRONT_ACCESS_TOKEN';
+const SHOPIFY_API_URL  = `https://${SHOPIFY_DOMAIN}/api/2024-04/graphql.json`;
+
+async function shopifyFetch(query, variables = {}) {
+  const res = await fetch(SHOPIFY_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN
+    },
+    body: JSON.stringify({ query, variables })
+  });
+  const { data, errors } = await res.json();
+  if (errors) console.error('Shopify API error:', errors);
+  return data;
+}
+```
+
+---
+
+### Step 3 — Fetch Products
+
+Replace the static shop cards with a dynamic render. Call this when the shop page becomes active:
+
+```js
+const PRODUCTS_QUERY = `
+  query Products {
+    products(first: 10) {
+      edges {
+        node {
+          id
+          title
+          handle
+          priceRange {
+            minVariantPrice { amount currencyCode }
+          }
+          images(first: 1) {
+            edges { node { url altText } }
+          }
+          variants(first: 1) {
+            edges { node { id availableForSale } }
+          }
+        }
+      }
+    }
+  }
+`;
+
+async function loadShopProducts() {
+  const data = await shopifyFetch(PRODUCTS_QUERY);
+  const products = data.products.edges.map(e => e.node);
+  renderShopCards(products);
+}
+
+function renderShopCards(products) {
+  const grid = document.querySelector('#page-shop .shop-grid');
+  if (!grid) return;
+  grid.innerHTML = products.map(p => {
+    const img   = p.images.edges[0]?.node.url || '';
+    const alt   = p.images.edges[0]?.node.altText || p.title;
+    const price = parseFloat(p.priceRange.minVariantPrice.amount).toFixed(2);
+    const variantId = p.variants.edges[0]?.node.id || '';
+    const inStock   = p.variants.edges[0]?.node.availableForSale;
+    return `
+      <div class="shop-card" data-variant="${variantId}">
+        <div class="shop-card-img-wrap">
+          <img src="${img}" alt="${alt}" loading="lazy" onerror="this.style.opacity='0'">
+        </div>
+        <div class="shop-card-info">
+          <div class="shop-card-title">${p.title}</div>
+          <div class="shop-card-price">$${price}</div>
+          <button class="shop-card-btn" onclick="addToCart('${variantId}')" ${!inStock ? 'disabled' : ''}>
+            ${inStock ? 'Add to Cart' : 'Sold Out'}
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+}
+```
+
+---
+
+### Step 4 — Cart and Checkout
+
+Shopify headless checkout: create a cart, get a `checkoutUrl`, redirect the user.
+
+```js
+let cartId = null;
+
+const CREATE_CART = `
+  mutation CartCreate($lines: [CartLineInput!]) {
+    cartCreate(input: { lines: $lines }) {
+      cart { id checkoutUrl }
+      userErrors { field message }
+    }
+  }
+`;
+
+const ADD_LINE = `
+  mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) {
+      cart { id checkoutUrl totalQuantity }
+    }
+  }
+`;
+
+async function addToCart(variantId) {
+  if (!cartId) {
+    const data = await shopifyFetch(CREATE_CART, {
+      lines: [{ merchandiseId: variantId, quantity: 1 }]
+    });
+    cartId = data.cartCreate.cart.id;
+    updateCartCount(1);
+  } else {
+    await shopifyFetch(ADD_LINE, {
+      cartId,
+      lines: [{ merchandiseId: variantId, quantity: 1 }]
+    });
+    updateCartCount();
+  }
+}
+
+async function goToCheckout() {
+  if (!cartId) return;
+  const CART_QUERY = `query Cart($id: ID!) { cart(id: $id) { checkoutUrl } }`;
+  const data = await shopifyFetch(CART_QUERY, { id: cartId });
+  window.location.href = data.cart.checkoutUrl;
+}
+```
+
+---
+
+### Step 5 — Hook into Page Navigation
+
+Call `loadShopProducts()` when the shop page activates. Find `navigateTo` in `index.html` (~line 3023) and add:
+
+```js
+// Inside navigateTo, after the page switch:
+if (page === 'page-shop') loadShopProducts();
+```
+
+---
+
+### Product Detail Page (product.html)
+
+`product.html` currently uses hardcoded product data. To make it dynamic:
+
+1. Pass the product handle in the URL: `product.html?handle=tee-skull-cluster`
+2. On load, read `new URLSearchParams(location.search).get('handle')`
+3. Fetch via:
+
+```js
+const PRODUCT_QUERY = `
+  query Product($handle: String!) {
+    productByHandle(handle: $handle) {
+      title
+      descriptionHtml
+      images(first: 10) { edges { node { url altText } } }
+      variants(first: 20) {
+        edges {
+          node {
+            id title price { amount } availableForSale
+            selectedOptions { name value }
+          }
+        }
+      }
+    }
+  }
+`;
+```
+
+---
+
+### Environment Setup
+
+The Storefront token is a **public** credential — it's safe in client JS. It cannot access orders, customer PII, or admin data. Keep the Shopify Admin API key (if needed for webhooks or server-side ops) in Vercel environment variables only, never in `index.html`.
+
+| Credential | Where to store | Notes |
+|---|---|---|
+| Storefront API token | Inline in `index.html` | Public, client-safe |
+| `.myshopify.com` domain | Inline in `index.html` | Not sensitive |
+| Admin API key | Vercel env vars only | Never client-side |
+
+---
+
+### References
+
+- [Shopify Storefront API docs](https://shopify.dev/docs/api/storefront)
+- [Cart API reference](https://shopify.dev/docs/api/storefront/2024-04/mutations/cartCreate)
+- [GraphQL explorer](https://shopify.dev/docs/apps/tools/graphiql-storefront-api)
+
+---
+
 ## Repo
 
 | | |
