@@ -1361,11 +1361,16 @@
       position: relative;
       height: auto;
       min-height: 0;
-      padding: 40px 20px 60px;
+      padding: 72px 20px 60px;
       justify-content: flex-start;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
       background: rgba(6, 4, 8, 0.98);
+    }
+    .vault-gate-overlay .token-coin {
+      width: 90px;
+      height: 90px;
+      font-size: 36px;
     }
   }
 
@@ -1661,21 +1666,21 @@
 
 <!-- Mobile Overlay -->
 <div class="mobile-overlay" id="mobileOverlay">
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('music')">Music</a>
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('shop')">Shop</a>
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('tour')">Tour</a>
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('vault')">Vault</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('music')">Music</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('shop')">Shop</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('tour')">Tour</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('vault')">Vault</a>
 </div>
 
 
 
 <!-- Navigation — 4 corners + centered wordmark -->
 <nav class="nav" id="mainNav">
-  <a href="javascript:void(0)" class="nav-wordmark" onclick="navigateTo('home')">Sosa</a>
-  <div class="nav-corner nav-corner--tl"><a href="javascript:void(0)" onclick="navigateTo('music')">Music</a></div>
-  <div class="nav-corner nav-corner--tr"><a href="javascript:void(0)" onclick="navigateTo('shop')">Shop</a></div>
-  <div class="nav-corner nav-corner--bl"><a href="javascript:void(0)" onclick="navigateTo('tour')">Tour</a></div>
-  <div class="nav-corner nav-corner--br"><a href="javascript:void(0)" onclick="navigateTo('vault')">Vault</a></div>
+  <a href="#" class="nav-wordmark" onclick="event.preventDefault(); navigateTo('home')">Sosa</a>
+  <div class="nav-corner nav-corner--tl"><a href="#" onclick="event.preventDefault(); navigateTo('music')">Music</a></div>
+  <div class="nav-corner nav-corner--tr"><a href="#" onclick="event.preventDefault(); navigateTo('shop')">Shop</a></div>
+  <div class="nav-corner nav-corner--bl"><a href="#" onclick="event.preventDefault(); navigateTo('tour')">Tour</a></div>
+  <div class="nav-corner nav-corner--br"><a href="#" onclick="event.preventDefault(); navigateTo('vault')">Vault</a></div>
   <button class="hamburger" id="hamburger" onclick="toggleMobile()">
     <span></span><span></span><span></span>
   </button>
