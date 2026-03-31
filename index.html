@@ -2510,9 +2510,16 @@ window.addEventListener('load', function(){(function(){
   })();
 
   // Post-processing — UnrealBloomPass + Chromatic Aberration
-  // Skipped on mobile: UnrealBloomPass uses half-float render targets unsupported on iOS Safari
+  // Requires half-float render target support. Skipped when unavailable (iOS Safari,
+  // mobile Chrome, Arc mobile, any GPU lacking OES_texture_half_float).
+  // UA check is a fast early-exit; capability check catches any missed edge case.
   let composer = null, bloomPass = null, combinedPass = null;
-  if (!isMobile) {
+  const _gl = renderer.getContext();
+  const _halfFloat = _gl.getExtension('OES_texture_half_float') ||
+                     _gl.getExtension('EXT_color_buffer_half_float') ||
+                     _gl.getExtension('EXT_color_buffer_float');
+  const useComposer = !isMobile && !!_halfFloat;
+  if (useComposer) {
   const _composer = new THREE.EffectComposer(renderer);
   composer = _composer;
   const renderPass = new THREE.RenderPass(scene, camera);
