@@ -2777,7 +2777,7 @@ window.addEventListener('load', function(){(function(){
 
   // Desktop: enhanced cursor tracking with depth parallax
   // Only block on mobile (touch-primary) devices, not desktop Chrome which may have DeviceOrientation
-  const isTouchDevice = ('ontouchstart' in window) && (navigator.maxTouchPoints >= 1);
+  const isTouchDevice = isMobile;
   document.addEventListener('mousemove', (e) => {
     if (isTouchDevice && isGyroActive) return;
     targetX = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -2835,18 +2835,29 @@ window.addEventListener('load', function(){(function(){
     initGyroscope();
   }
 
-  // iOS 13+: auto-request on first touch after loader is gone
+  // iOS 13+ / Arc mobile: auto-request gyro permission on first touch after loader is gone
   if (isTouchDevice && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
     document.addEventListener('touchstart', function requestGyroOnce() {
       // Don't interrupt the loader — wait until it's hidden
       const loader = document.getElementById('loader');
       if (loader && !loader.classList.contains('hidden')) return;
-      DeviceOrientationEvent.requestPermission().then(function(state) {
-        if (state === 'granted') {
-          isGyroActive = true;
+      try {
+        DeviceOrientationEvent.requestPermission().then(function(state) {
+          if (state === 'granted') {
+            isGyroActive = true;
+            window.addEventListener('deviceorientation', handleGyro, true);
+          }
+        }).catch(function(err) {
+          // Arc or other WebKit browser denied/failed — try attaching listener directly
+          console.warn('[chiefkeef] Gyro permission failed, trying direct attach:', err);
           window.addEventListener('deviceorientation', handleGyro, true);
-        }
-      }).catch(function() {});
+          setTimeout(function() { if (gyroBaseAlpha === null) isGyroActive = false; }, 1000);
+        });
+      } catch(err) {
+        // requestPermission threw synchronously (some Arc versions)
+        window.addEventListener('deviceorientation', handleGyro, true);
+        setTimeout(function() { if (gyroBaseAlpha === null) isGyroActive = false; }, 1000);
+      }
       document.removeEventListener('touchstart', requestGyroOnce);
     }, { once: false });
   }
