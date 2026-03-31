@@ -1425,6 +1425,225 @@
     filter: drop-shadow(0 0 20px rgba(155, 63, 223, 0.4));
   }
 
+
+  /* ===== Sosa Coin ===== */
+  .sosa-coin-section {
+    padding: 120px 40px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(160, 48, 232, 0.15);
+  }
+
+  .token-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 80px;
+    gap: 24px;
+  }
+
+  .token-coin {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--purple-bright), var(--purple-deep) 60%, #1a0030);
+    border: 2px solid rgba(160, 48, 232, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 48px;
+    color: var(--white);
+    box-shadow: 0 0 60px rgba(160, 48, 232, 0.35), 0 0 120px rgba(160, 48, 232, 0.15);
+    animation: coinFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes coinFloat {
+    0%, 100% { transform: translateY(0px); box-shadow: 0 0 60px rgba(160,48,232,0.35), 0 0 120px rgba(160,48,232,0.15); }
+    50% { transform: translateY(-10px); box-shadow: 0 20px 80px rgba(160,48,232,0.5), 0 0 140px rgba(160,48,232,0.2); }
+  }
+
+  .token-ticker {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--purple-bright);
+    background: rgba(160, 48, 232, 0.08);
+    border: 1px solid rgba(160, 48, 232, 0.2);
+    padding: 6px 18px;
+    border-radius: 2px;
+  }
+
+  .token-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--gray-light);
+    max-width: 560px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .token-coming-soon {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--green-toxic);
+    opacity: 0.7;
+  }
+
+  /* Utility grid */
+  .token-utility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: rgba(160, 48, 232, 0.1);
+    border: 1px solid rgba(160, 48, 232, 0.1);
+    margin-bottom: 80px;
+  }
+
+  .token-utility-card {
+    background: var(--black-deep);
+    padding: 36px 32px;
+    transition: background 0.3s;
+  }
+
+  .token-utility-card:hover {
+    background: var(--black-mid);
+  }
+
+  .token-utility-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .token-utility-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--purple-bright);
+    margin-bottom: 10px;
+  }
+
+  .token-utility-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--gray-light);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  /* Tokenomics */
+  .token-omics-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 24px;
+  }
+
+  .token-omics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 80px;
+  }
+
+  .token-omics-table tr {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .token-omics-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .token-omics-table td {
+    padding: 16px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+  }
+
+  .token-omics-table td:first-child {
+    color: var(--gray);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    width: 40%;
+  }
+
+  .token-omics-table td:last-child {
+    color: var(--white);
+    letter-spacing: 1px;
+  }
+
+  .token-omics-table td .tba {
+    color: rgba(160, 48, 232, 0.5);
+    font-size: 9px;
+    letter-spacing: 3px;
+  }
+
+  /* CTA */
+  .token-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 60px 0 40px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .token-cta-title {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--white);
+    text-align: center;
+  }
+
+  .token-cta-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--gray-light);
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .token-cta-btn {
+    background: transparent;
+    border: 1px solid var(--purple-bright);
+    color: var(--purple-bright);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 14px 40px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .token-cta-btn:hover {
+    background: var(--purple-bright);
+    color: var(--black-deep);
+  }
+
+  .token-disclaimer {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.15);
+    text-align: center;
+    max-width: 480px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 768px) {
+    .sosa-coin-section { padding: 80px 20px 60px; }
+    .token-utility-grid { grid-template-columns: 1fr; }
+    .token-omics-table td:first-child { width: 50%; }
+  }
 </style>
 </head>
 <body>
@@ -1718,6 +1937,97 @@
     </div>
   </div>
   </div>
+</section>
+
+<!-- ===== SOSA COIN ===== -->
+<section class="sosa-coin-section">
+
+  <div class="token-hero reveal">
+    <div class="token-coin">S</div>
+    <div class="token-ticker">$SOSA — Official Fan Token</div>
+    <h2 class="section-title" style="margin-bottom:0">Sosa <span class="accent">Coin</span></h2>
+    <p class="token-tagline">The official Chief Keef fan club token. Holders get exclusive access to vault content, early merch drops, tour presales, and direct community perks — on-chain, forever.</p>
+    <div class="token-coming-soon">— Launch TBA —</div>
+  </div>
+
+  <div class="token-utility-grid">
+    <div class="token-utility-card reveal" style="--delay:0.05s">
+      <span class="token-utility-icon">🔐</span>
+      <div class="token-utility-title">Vault Access</div>
+      <div class="token-utility-desc">Full access to The Vault — era photography, unreleased artwork, and archive material locked to $SOSA holders only.</div>
+    </div>
+    <div class="token-utility-card reveal" style="--delay:0.1s">
+      <span class="token-utility-icon">👕</span>
+      <div class="token-utility-title">Merch Presale</div>
+      <div class="token-utility-desc">First access to every Skeletor and GBE drop before it goes public. Holder-exclusive colorways and limited quantities.</div>
+    </div>
+    <div class="token-utility-card reveal" style="--delay:0.15s">
+      <span class="token-utility-icon">🎟</span>
+      <div class="token-utility-title">Tour Presale</div>
+      <div class="token-utility-desc">Priority ticket access for every Chief Keef tour date. Holder allocation secured before general on-sale.</div>
+    </div>
+    <div class="token-utility-card reveal" style="--delay:0.2s">
+      <span class="token-utility-icon">🎧</span>
+      <div class="token-utility-title">Unreleased Music</div>
+      <div class="token-utility-desc">Gated listening sessions, snippets, and early access to new projects direct from the camp — exclusive to the community.</div>
+    </div>
+    <div class="token-utility-card reveal" style="--delay:0.25s">
+      <span class="token-utility-icon">🤝</span>
+      <div class="token-utility-title">Meet & Greet</div>
+      <div class="token-utility-desc">Holder-only meet and greet allocations at select shows. On-chain verification at the door. No resale, no bots.</div>
+    </div>
+    <div class="token-utility-card reveal" style="--delay:0.3s">
+      <span class="token-utility-icon">🏆</span>
+      <div class="token-utility-title">GBE Community</div>
+      <div class="token-utility-desc">Access to the official Glory Boyz community — direct channel, votes on future drops, and fan council participation.</div>
+    </div>
+  </div>
+
+  <div class="reveal" style="--delay:0.1s">
+    <div class="token-omics-title">Tokenomics</div>
+    <table class="token-omics-table">
+      <tr>
+        <td>Token Name</td>
+        <td>Sosa Coin</td>
+      </tr>
+      <tr>
+        <td>Ticker</td>
+        <td>$SOSA</td>
+      </tr>
+      <tr>
+        <td>Chain</td>
+        <td>Solana</td>
+      </tr>
+      <tr>
+        <td>Total Supply</td>
+        <td><span class="tba">TBA</span></td>
+      </tr>
+      <tr>
+        <td>Contract</td>
+        <td><span class="tba">TBA — Pending Launch</span></td>
+      </tr>
+      <tr>
+        <td>Holder Utility</td>
+        <td>Vault · Merch · Tour · Music · IRL</td>
+      </tr>
+      <tr>
+        <td>Distribution</td>
+        <td><span class="tba">TBA</span></td>
+      </tr>
+      <tr>
+        <td>Status</td>
+        <td>Pre-Launch</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="token-cta reveal" style="--delay:0.15s">
+    <div class="token-cta-title">Join the <span class="accent">Movement</span></div>
+    <p class="token-cta-sub">Follow for launch details. GBE.</p>
+    <button class="token-cta-btn" onclick="window.open('https://twitter.com/chiefkeef','_blank')">Follow for Launch</button>
+    <p class="token-disclaimer">$SOSA is a fan utility token. Not a financial instrument. Not investment advice. For community access and holder perks only. Details subject to change prior to launch.</p>
+  </div>
+
 </section>
 
 </div><!-- /page-vault -->
