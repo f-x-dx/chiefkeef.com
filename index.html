@@ -844,11 +844,11 @@
     align-items: center;
     justify-content: center;
     background: linear-gradient(180deg,
-      rgba(10,10,10,0.6) 0%,
-      rgba(10,10,10,0.97) 35%,
-      rgba(10,10,10,0.99) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+      rgba(6,4,8,0.85) 0%,
+      rgba(6,4,8,0.97) 35%,
+      rgba(6,4,8,0.99) 100%);
+    /* backdrop-filter intentionally omitted — causes iOS WebKit layer collapse
+       inside position:fixed overflow-y:auto containers, making the page invisible */
     transition: opacity 0.8s ease, visibility 0.8s ease;
   }
 
@@ -2722,13 +2722,21 @@ window.addEventListener('load', function(){(function(){
   // Requires half-float render target support. Skipped when unavailable (iOS Safari,
   // mobile Chrome, Arc mobile, any GPU lacking OES_texture_half_float).
   // UA check is a fast early-exit; capability check catches any missed edge case.
+  // Full try/catch guards against: CDN shader load failures (Arc content blocker),
+  // GPU-specific half-float bugs, EffectComposer init errors. Any failure → direct render.
   let composer = null, bloomPass = null, combinedPass = null;
   const _gl = renderer.getContext();
-  const _halfFloat = _gl.getExtension('OES_texture_half_float') ||
-                     _gl.getExtension('EXT_color_buffer_half_float') ||
-                     _gl.getExtension('EXT_color_buffer_float');
-  const useComposer = !isMobile && !!_halfFloat;
+  const _halfFloat = _gl && (
+    _gl.getExtension('OES_texture_half_float') ||
+    _gl.getExtension('EXT_color_buffer_half_float') ||
+    _gl.getExtension('EXT_color_buffer_float')
+  );
+  const useComposer = !isMobile && !!_halfFloat &&
+    typeof THREE.EffectComposer === 'function' &&
+    typeof THREE.UnrealBloomPass === 'function' &&
+    typeof THREE.ShaderPass === 'function';
   if (useComposer) {
+  try {
   const _composer = new THREE.EffectComposer(renderer);
   composer = _composer;
   const renderPass = new THREE.RenderPass(scene, camera);
@@ -2833,7 +2841,13 @@ window.addEventListener('load', function(){(function(){
   };
   combinedPass = new THREE.ShaderPass(combinedShader);
   composer.addPass(combinedPass);
-  } // end !isMobile post-processing
+  } catch(e) {
+    // EffectComposer init failed (missing CDN shader, GPU bug, Arc content blocker, etc.)
+    // Fall back to direct renderer.render() — scene still renders, no post-processing.
+    console.warn('[chiefkeef] Post-processing unavailable, using direct render:', e.message || e);
+    composer = null; bloomPass = null; combinedPass = null;
+  }
+  } // end useComposer
 
   // Input tracking — cursor on desktop, gyroscope on mobile
   let mouseX = 0, mouseY = 0;
@@ -3061,7 +3075,13 @@ window.addEventListener('load', function(){(function(){
       pts.rotation.y = t * 0.04;
     }
 
-    if (composer) { composer.render(); } else { renderer.render(scene, camera); }
+    if (composer) {
+      try { composer.render(); } catch(e) {
+        // Composer failed mid-session (context loss, GPU driver issue, etc.) — drop to direct
+        composer = null; bloomPass = null; combinedPass = null;
+        renderer.render(scene, camera);
+      }
+    } else { renderer.render(scene, camera); }
   }
 
   // Handle resize + orientation change
