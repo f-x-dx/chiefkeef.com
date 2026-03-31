@@ -2074,7 +2074,11 @@ window.addEventListener('load', function(){(function(){
 
   // Three.js setup
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  // Mobile detection — multi-signal: UA, touch, viewport, coarse pointer.
+  // Arc mobile on iOS can spoof desktop UA, so UA alone is not reliable.
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent) ||
+    ('ontouchstart' in window && navigator.maxTouchPoints > 1 && window.innerWidth < 1024) ||
+    (window.matchMedia && window.matchMedia('(pointer: coarse)').matches && window.innerWidth < 1024);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
   renderer.setClearColor(0x060408, 1);
   renderer.setSize(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight);
@@ -3076,8 +3080,21 @@ window.addEventListener('load', function(){(function(){
     }
 
     if (composer) {
-      try { composer.render(); } catch(e) {
-        // Composer failed mid-session (context loss, GPU driver issue, etc.) — drop to direct
+      try {
+        composer.render();
+        // Safety: if render target is black after composer, nuke it and go direct.
+        // This catches the Arc mobile flicker-then-black scenario.
+        if (frameCount === 3) {
+          var px = new Uint8Array(4);
+          renderer.readRenderTargetPixels(composer.readBuffer, Math.floor(canvas.width/2), Math.floor(canvas.height/2), 1, 1, px);
+          if (px[0] === 0 && px[1] === 0 && px[2] === 0 && px[3] === 0) {
+            console.warn('[chiefkeef] Composer producing blank frames, falling back to direct render');
+            composer = null; bloomPass = null; combinedPass = null;
+            renderer.render(scene, camera);
+          }
+        }
+      } catch(e) {
+        // Composer failed mid-session (context loss, GPU driver issue, etc.)
         composer = null; bloomPass = null; combinedPass = null;
         renderer.render(scene, camera);
       }
@@ -3109,8 +3126,16 @@ window.addEventListener('load', function(){(function(){
   });
 
   // WebGL context loss/restore (iOS kills context on permission dialogs, backgrounding, etc.)
-  canvas.addEventListener('webglcontextlost', function(e) { e.preventDefault(); }, false);
-  canvas.addEventListener('webglcontextrestored', function() { renderer.resetState(); }, false);
+  // WebGL context loss/restore — kill composer, force clean direct render on restore.
+  canvas.addEventListener('webglcontextlost', function(e) {
+    e.preventDefault();
+    composer = null; bloomPass = null; combinedPass = null;
+  }, false);
+  canvas.addEventListener('webglcontextrestored', function() {
+    renderer.resetState();
+    renderer.setClearColor(0x060408, 1);
+    composer = null; bloomPass = null; combinedPass = null;
+  }, false);
 
   animate();
 })();});
