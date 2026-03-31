@@ -1492,7 +1492,7 @@
   <div class="shop-grid">
     <a class="product-card reveal" href="product.html?id=tee-skull-script" style="--delay: 0.1s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/tee-skull-script-front.png" alt="Skeletor Skull Script Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/tee-skull-script-front.png" alt="Skeletor Skull Script Tee" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity='0'">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL SCRIPT TEE</div>
@@ -1503,7 +1503,7 @@
     </a>
     <a class="product-card reveal" href="product.html?id=tee-skull-cluster" style="--delay: 0.2s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/tee-skull-cluster-front.png" alt="Skeletor Skull Cluster Tee" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/tee-skull-cluster-front.png" alt="Skeletor Skull Cluster Tee" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity='0'">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL CLUSTER TEE</div>
@@ -1514,7 +1514,7 @@
     </a>
     <a class="product-card reveal" href="product.html?id=hoodie-barbed" style="--delay: 0.3s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/hoodie-barbed-front.png" alt="Skeletor Barbed Wire Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/hoodie-barbed-front.png" alt="Skeletor Barbed Wire Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity='0'">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR BARBED WIRE HOODIE</div>
@@ -1525,7 +1525,7 @@
     </a>
     <a class="product-card reveal" href="product.html?id=hoodie-skull-script" style="--delay: 0.4s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/hoodie-skull-script-front.png" alt="Skeletor Skull Script Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/hoodie-skull-script-front.png" alt="Skeletor Skull Script Hoodie" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity='0'">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL SCRIPT HOODIE</div>
@@ -1536,7 +1536,7 @@
     </a>
     <a class="product-card reveal" href="product.html?id=crew-skull-cluster" style="--delay: 0.5s; text-decoration:none;">
       <div class="product-image">
-        <img src="assets/shop/crew-skull-cluster-front.png" alt="Skeletor Skull Cluster Crewneck" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <img src="assets/shop/crew-skull-cluster-front.png" alt="Skeletor Skull Cluster Crewneck" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity='0'">
       </div>
       <div class="product-info">
         <div class="product-name">SKELETOR SKULL CLUSTER CREW</div>
@@ -2759,7 +2759,7 @@ window.addEventListener('load', function(){(function(){
     gyroBaseBeta = null;
     // Reset smoothed input so camera doesn't snap
     mouseX = 0; mouseY = 0; targetX = 0; targetY = 0; smx = 0; smy = 0;
-    orientationTimeout = setTimeout(onResize, 350);
+    orientationTimeout = setTimeout(onResize, 500);
   });
 
   // WebGL context loss/restore (iOS kills context on permission dialogs, backgrounding, etc.)
@@ -2952,7 +2952,7 @@ window.addEventListener('load', function(){(function(){
 
   resizeCE();
   window.addEventListener('resize', resizeCE);
-  window.addEventListener('orientationchange', function() { setTimeout(resizeCE, 350); });
+  window.addEventListener('orientationchange', function() { setTimeout(resizeCE, 500); });
 })();
 
 // ==================== AUDIO (TRACK PLAYER) ====================
