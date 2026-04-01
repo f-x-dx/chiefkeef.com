@@ -1,0 +1,15 @@
+{
+  "name": "chiefkeef-com",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chief Keef official site with Shopify headless integration",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
