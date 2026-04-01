@@ -775,52 +775,229 @@
   }
 
   /* Vault */
-  .vault-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-    perspective: 1200px;
-  }
-
-  .vault-card {
-    position: relative;
-    aspect-ratio: 3/4;
-    background: var(--black-mid);
-    overflow: hidden;
+  /* ===== Back to Gate Button ===== */
+  .vault-back-btn {
+    display: none;
+    position: sticky;
+    top: 12px;
+    z-index: 20;
+    margin: 0 auto 24px;
+    background: rgba(6, 4, 8, 0.85);
+    border: 1px solid rgba(160, 48, 232, 0.3);
+    color: var(--purple-bright);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 10px 24px;
     cursor: pointer;
-    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    transform-style: preserve-3d;
+    transition: background 0.3s, border-color 0.3s;
+    text-align: center;
+    width: fit-content;
+  }
+  .vault-back-btn:hover {
+    background: rgba(160, 48, 232, 0.15);
+    border-color: var(--purple-bright);
+  }
+  .vault-grid.unlocked .vault-back-btn {
+    display: block;
+  }
+
+  /* ===== MySpace-Inspired Vault Feed ===== */
+  .vault-grid {
+    display: block;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .vault-feed {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+    grid-auto-flow: dense;
+  }
+
+  /* Feed item base */
+  .vault-item {
+    position: relative;
+    overflow: hidden;
     border: 1px solid rgba(255,255,255,0.04);
+    background: var(--black-mid);
+    cursor: pointer;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .vault-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 40px rgba(123, 47, 190, 0.25);
+    z-index: 5;
   }
 
-  .vault-card:hover {
-    transform: rotateY(-5deg) rotateX(3deg) scale(1.02);
-    box-shadow: 10px 10px 40px rgba(123,47,190,0.2);
-  }
+  /* Size variants — chaotic MySpace grid */
+  .vault-item--wide    { grid-column: span 8; aspect-ratio: 16/9; }
+  .vault-item--tall    { grid-column: span 4; grid-row: span 2; }
+  .vault-item--square  { grid-column: span 4; aspect-ratio: 1/1; }
+  .vault-item--small   { grid-column: span 3; aspect-ratio: 4/3; }
+  .vault-item--full    { grid-column: span 12; aspect-ratio: 21/9; }
+  .vault-item--medium  { grid-column: span 6; aspect-ratio: 4/3; }
 
-  .vault-card-img {
+  /* Image items */
+  .vault-item img, .vault-item video {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.7;
-    transition: opacity 0.5s;
+    display: block;
+    opacity: 0.85;
+    transition: opacity 0.4s;
   }
+  .vault-item:hover img,
+  .vault-item:hover video { opacity: 1; }
 
-  .vault-card:hover .vault-card-img { opacity: 0.4; }
-
-  .vault-card-label {
+  /* GIF badge */
+  .vault-item--gif::after {
+    content: 'GIF';
     position: absolute;
-    bottom: 16px;
-    left: 16px;
-    right: 16px;
+    top: 10px;
+    right: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    background: rgba(0,0,0,0.7);
+    color: var(--green-toxic);
+    padding: 3px 8px;
+    border: 1px solid rgba(0,255,65,0.3);
   }
 
-  .vault-card-era {
+  /* Video play overlay */
+  .vault-item--video::after {
+    content: '▶';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    color: rgba(255,255,255,0.7);
+    text-shadow: 0 0 20px rgba(0,0,0,0.8);
+    pointer-events: none;
+    transition: color 0.3s;
+  }
+  .vault-item--video:hover::after {
+    color: var(--purple-bright);
+  }
+
+  /* Music player item */
+  .vault-item--audio {
+    grid-column: span 6;
+    background: linear-gradient(135deg, var(--black-mid) 0%, rgba(91,31,158,0.15) 100%);
+    border: 1px solid rgba(160, 48, 232, 0.15);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+  .vault-audio-title {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 18px;
+    color: var(--white);
+  }
+  .vault-audio-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  .vault-audio-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .vault-audio-bar::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 35%;
+    height: 100%;
+    background: var(--purple-bright);
+    border-radius: 2px;
+    animation: audioProgress 8s ease-in-out infinite;
+  }
+  @keyframes audioProgress {
+    0% { width: 0%; }
+    50% { width: 65%; }
+    100% { width: 0%; }
+  }
+  .vault-audio-waveform {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 24px;
+    margin-top: 4px;
+  }
+  .vault-audio-waveform span {
+    flex: 1;
+    background: var(--purple-bright);
+    opacity: 0.5;
+    border-radius: 1px;
+    animation: waveBar 1.2s ease-in-out infinite;
+  }
+  @keyframes waveBar {
+    0%, 100% { height: 20%; }
+    50% { height: 90%; }
+  }
+
+  /* Text/quote items — MySpace bulletin board vibe */
+  .vault-item--text {
+    grid-column: span 4;
+    background: linear-gradient(180deg, rgba(91,31,158,0.1) 0%, var(--black-mid) 100%);
+    border: 1px solid rgba(160, 48, 232, 0.12);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+  .vault-text-quote {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 20px;
+    color: var(--white);
+    line-height: 1.3;
+  }
+  .vault-text-src {
+    font-family: 'Space Mono', monospace;
     font-size: 8px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--purple-bright);
-    margin-bottom: 4px;
+  }
+
+  /* Timestamp labels on images */
+  .vault-item-date {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.6);
+    padding: 3px 8px;
+  }
+  .vault-item-caption {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: var(--purple-bright);
+    background: rgba(0,0,0,0.6);
+    padding: 3px 8px;
   }
 
   .vault-card-name {
@@ -1302,7 +1479,16 @@
 
     .music-feed { grid-template-columns: 1fr; }
     .shop-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .vault-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .vault-grid { padding: 0 12px; }
+    .vault-feed { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    .vault-item--wide { grid-column: span 6; }
+    .vault-item--tall { grid-column: span 3; }
+    .vault-item--square { grid-column: span 3; }
+    .vault-item--small { grid-column: span 3; }
+    .vault-item--full { grid-column: span 6; }
+    .vault-item--medium { grid-column: span 6; }
+    .vault-item--audio { grid-column: span 6; }
+    .vault-item--text { grid-column: span 6; }
 
     .tour-row {
       grid-template-columns: 80px 1fr 80px;
@@ -1331,20 +1517,16 @@
 
   @media (max-width: 480px) {
     .shop-grid { grid-template-columns: 1fr; }
-    .vault-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      perspective: none;
-    }
-    /* Disable 3D transforms on mobile — causes rendering artifacts */
-    .vault-card {
-      transform-style: flat;
-      aspect-ratio: 3/4;
-    }
-    .vault-card:hover {
-      transform: none;
-      box-shadow: none;
-    }
+    .vault-feed { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .vault-item--wide { grid-column: span 4; }
+    .vault-item--tall { grid-column: span 2; }
+    .vault-item--square { grid-column: span 2; }
+    .vault-item--small { grid-column: span 2; }
+    .vault-item--full { grid-column: span 4; }
+    .vault-item--medium { grid-column: span 4; }
+    .vault-item--audio { grid-column: span 4; padding: 16px; }
+    .vault-item--text { grid-column: span 4; padding: 16px; }
+    .vault-item:hover { transform: none; box-shadow: none; }
     /* Vault gate legible on small screens */
     .vault-gate-title { font-size: 22px; }
     .vault-gate-sub { font-size: 12px; }
@@ -1885,62 +2067,159 @@
       <p class="token-disclaimer" style="margin-top:24px">$SOSA is a fan utility token. Not a financial instrument. Not investment advice. For community access and holder perks only.</p>
     </div>
     <div class="vault-grid locked" id="vaultGrid">
-    <div class="vault-card reveal" style="--delay: 0.05s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #2a0a4a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2012</div>
-        <div class="vault-card-name">Finally Rich</div>
+
+    <!-- Back to $SOSA gate -->
+    <button class="vault-back-btn" onclick="disconnectWallet()">← Back to $SOSA</button>
+
+    <div class="vault-feed">
+
+      <!-- Row 1: Hero image + quote -->
+      <div class="vault-item vault-item--wide reveal" style="--delay:0.05s">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, #2a0a4a 0%, #1a0030 40%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'UnifrakturCook',cursive;font-size:clamp(28px,5vw,48px);color:rgba(255,255,255,0.08);text-align:center;padding:20px;">Finally Rich Era</span>
+        </div>
+        <span class="vault-item-date">2012</span>
+        <span class="vault-item-caption">Chicago, IL</span>
       </div>
-    </div>
-    <div class="vault-card reveal" style="--delay: 0.1s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #1a1a3a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2013</div>
-        <div class="vault-card-name">Almighty So</div>
+      <div class="vault-item vault-item--text vault-item--tall reveal" style="--delay:0.1s">
+        <div class="vault-text-quote">"That's That Shit I Don't Like"</div>
+        <div class="vault-text-src">— Interview, 2012</div>
+        <div style="margin-top:auto;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;">Unreleased Tape Notes</div>
       </div>
-    </div>
-    <div class="vault-card reveal" style="--delay: 0.15s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a2a0a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2013</div>
-        <div class="vault-card-name">Bang Pt. 2</div>
+
+      <!-- Row 2: Mixed photos -->
+      <div class="vault-item vault-item--square reveal" style="--delay:0.12s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #1a1a3a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:48px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2013</span>
       </div>
-    </div>
-    <div class="vault-card reveal" style="--delay: 0.2s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #3a1a0a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2014</div>
-        <div class="vault-card-name">Back From The Dead 2</div>
+      <div class="vault-item vault-item--square reveal" style="--delay:0.15s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a2a0a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:48px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2013</span>
+        <span class="vault-item-caption">Studio Session</span>
       </div>
-    </div>
-    <div class="vault-card reveal" style="--delay: 0.25s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #1a0a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2015</div>
-        <div class="vault-card-name">Sorry 4 The Weight</div>
+      <div class="vault-item vault-item--square reveal" style="--delay:0.18s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #3a1a0a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:48px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2014</span>
       </div>
-    </div>
-    <div class="vault-card reveal" style="--delay: 0.3s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a0a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2017</div>
-        <div class="vault-card-name">Two Zero One Seven</div>
+
+      <!-- Row 3: GIF + Audio player -->
+      <div class="vault-item vault-item--medium vault-item--gif reveal" style="--delay:0.2s">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a0a2a 0%, #0a1a2a 50%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+          <div style="font-size:64px;opacity:0.15;animation:coinFloat 3s ease-in-out infinite;">💀</div>
+        </div>
+        <span class="vault-item-date">2014</span>
+        <span class="vault-item-caption">Bang Pt. 2 Promo</span>
       </div>
-    </div>
-    <div class="vault-card reveal" style="--delay: 0.35s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #2a0a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2019</div>
-        <div class="vault-card-name">Glotoven</div>
+      <div class="vault-item vault-item--audio reveal" style="--delay:0.22s">
+        <div class="vault-audio-meta">Unreleased · 2014</div>
+        <div class="vault-audio-title">Back From The Dead II (Interlude)</div>
+        <div class="vault-audio-waveform">
+          <span style="animation-delay:0s"></span><span style="animation-delay:0.1s"></span><span style="animation-delay:0.2s"></span>
+          <span style="animation-delay:0.3s"></span><span style="animation-delay:0.15s"></span><span style="animation-delay:0.25s"></span>
+          <span style="animation-delay:0.05s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.12s"></span>
+          <span style="animation-delay:0.28s"></span><span style="animation-delay:0.08s"></span><span style="animation-delay:0.18s"></span>
+          <span style="animation-delay:0.22s"></span><span style="animation-delay:0.02s"></span><span style="animation-delay:0.32s"></span>
+          <span style="animation-delay:0.14s"></span>
+        </div>
+        <div class="vault-audio-bar"></div>
       </div>
-    </div>
-    <div class="vault-card reveal" style="--delay: 0.4s">
-      <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a1a2a 0%, #0a0a0a 100%);" class="vault-card-img"></div>
-      <div class="vault-card-label">
-        <div class="vault-card-era">2024</div>
-        <div class="vault-card-name">Almighty So 2</div>
+
+      <!-- Row 4: Video + small photos -->
+      <div class="vault-item vault-item--wide vault-item--video reveal" style="--delay:0.25s">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, #0a0a2a 0%, #1a0030 60%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'UnifrakturCook',cursive;font-size:clamp(20px,3vw,32px);color:rgba(255,255,255,0.06);text-align:center;padding:20px;">Unreleased Video</span>
+        </div>
+        <span class="vault-item-date">2015</span>
+        <span class="vault-item-caption">Sorry 4 The Weight</span>
       </div>
-    </div>
+      <div class="vault-item vault-item--small reveal" style="--delay:0.28s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #2a0a2a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:36px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2015</span>
+      </div>
+      <div class="vault-item vault-item--small reveal" style="--delay:0.3s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #0a1a2a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:36px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2016</span>
+      </div>
+      <div class="vault-item vault-item--small reveal" style="--delay:0.32s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #1a1a0a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:36px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2017</span>
+      </div>
+      <div class="vault-item vault-item--small reveal" style="--delay:0.34s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #2a1a0a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:36px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2017</span>
+        <span class="vault-item-caption">GBE Tour</span>
+      </div>
+
+      <!-- Row 5: Quote + GIF + audio -->
+      <div class="vault-item vault-item--text reveal" style="--delay:0.36s">
+        <div class="vault-text-quote">"I Changed The Sound"</div>
+        <div class="vault-text-src">— Twitter, 2019</div>
+      </div>
+      <div class="vault-item vault-item--medium vault-item--gif reveal" style="--delay:0.38s">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, #0a2a0a 0%, #1a0a2a 50%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+          <div style="font-size:72px;opacity:0.12;animation:coinFloat 2.5s ease-in-out infinite reverse;">🔥</div>
+        </div>
+        <span class="vault-item-date">2019</span>
+        <span class="vault-item-caption">Glotoven Sessions</span>
+      </div>
+      <div class="vault-item vault-item--small reveal" style="--delay:0.4s">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg, #2a0a4a 0%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:36px;opacity:0.2;">📸</span>
+        </div>
+        <span class="vault-item-date">2019</span>
+      </div>
+
+      <!-- Row 6: Full-width video + audio -->
+      <div class="vault-item vault-item--full vault-item--video reveal" style="--delay:0.42s">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a0030 0%, #0a0a2a 40%, #2a0a4a 80%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'UnifrakturCook',cursive;font-size:clamp(24px,4vw,42px);color:rgba(255,255,255,0.05);text-align:center;padding:20px;">Almighty So 2 — Behind The Scenes</span>
+        </div>
+        <span class="vault-item-date">2024</span>
+        <span class="vault-item-caption">Exclusive Footage</span>
+      </div>
+      <div class="vault-item vault-item--audio reveal" style="--delay:0.44s">
+        <div class="vault-audio-meta">Unreleased · 2024</div>
+        <div class="vault-audio-title">Almighty So 2 (Vault Cut)</div>
+        <div class="vault-audio-waveform">
+          <span style="animation-delay:0.15s"></span><span style="animation-delay:0.05s"></span><span style="animation-delay:0.25s"></span>
+          <span style="animation-delay:0.1s"></span><span style="animation-delay:0.3s"></span><span style="animation-delay:0.2s"></span>
+          <span style="animation-delay:0.35s"></span><span style="animation-delay:0s"></span><span style="animation-delay:0.12s"></span>
+          <span style="animation-delay:0.28s"></span><span style="animation-delay:0.08s"></span><span style="animation-delay:0.18s"></span>
+          <span style="animation-delay:0.22s"></span><span style="animation-delay:0.02s"></span><span style="animation-delay:0.32s"></span>
+          <span style="animation-delay:0.14s"></span>
+        </div>
+        <div class="vault-audio-bar"></div>
+      </div>
+      <div class="vault-item vault-item--medium vault-item--gif reveal" style="--delay:0.46s">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, #2a0a4a 0%, #0a2a2a 50%, #0a0a0a 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+          <div style="font-size:80px;opacity:0.1;animation:coinFloat 4s ease-in-out infinite;">👑</div>
+        </div>
+        <span class="vault-item-date">2024</span>
+        <span class="vault-item-caption">Glory Boyz Forever</span>
+      </div>
+
+      <!-- Row 7: Closing text -->
+      <div class="vault-item vault-item--text reveal" style="--delay:0.48s;grid-column:span 6">
+        <div class="vault-text-quote" style="font-size:clamp(18px,3vw,28px);">The Vault Is Just Getting Started</div>
+        <div class="vault-text-src">$SOSA Holders · Exclusive Access</div>
+        <div style="margin-top:12px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--gray);">MORE CONTENT COMING SOON</div>
+      </div>
+
+    </div><!-- /vault-feed -->
   </div>
   </div>
 </section>
