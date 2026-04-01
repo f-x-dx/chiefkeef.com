@@ -4197,14 +4197,23 @@ let holderCart = null; // Stored in sessionStorage per wallet
 let publicProductsLoaded = false;
 
 function loadPublicProducts() {
-  if (publicProductsLoaded) return;
+  console.log('[Shop] loadPublicProducts called, loaded:', publicProductsLoaded);
+  if (publicProductsLoaded) {
+    console.log('[Shop] Already loaded, skipping');
+    return;
+  }
 
   const grid = document.getElementById('publicProductsGrid');
   const loading = document.getElementById('shopLoading');
-  if (!grid) return;
+  console.log('[Shop] Grid element:', !!grid, 'Loading element:', !!loading);
+  if (!grid) {
+    console.warn('[Shop] Grid element not found, aborting');
+    return;
+  }
 
   // Only set flag after confirming DOM elements exist
   publicProductsLoaded = true;
+  console.log('[Shop] Fetching products from /api/public-products...');
 
   fetch('/api/public-products')
     .then(res => {
@@ -4212,11 +4221,13 @@ function loadPublicProducts() {
       return res.json();
     })
     .then(data => {
+      console.log('[Shop] API response:', data);
       if (loading) loading.remove();
       if (data.success && data.products && data.products.length > 0) {
+        console.log('[Shop] Rendering', data.products.length, 'products');
         renderProducts(grid, data.products, false);
       } else {
-        console.warn('No products returned:', data);
+        console.warn('[Shop] No products returned:', data);
         if (loading) loading.textContent = 'No products available';
       }
     })
@@ -4459,10 +4470,32 @@ const origNav = window.navigateTo;
 if (typeof origNav === 'function') {
   window.navigateTo = function(page) {
     if (page === 'shop') {
+      console.log('[Shop] navigateTo triggered, loading products...');
       setTimeout(loadPublicProducts, 100);
     }
     origNav(page);
   };
+}
+
+// Also trigger product load when shop section becomes visible (covers direct loads)
+const shopSection = document.getElementById('page-shop');
+if (shopSection && typeof IntersectionObserver !== 'undefined') {
+  const shopObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        console.log('[Shop] Section visible, loading products...');
+        loadPublicProducts();
+        shopObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.1 });
+  shopObserver.observe(shopSection);
+}
+
+// Fallback: load products immediately if shop is already visible
+if (shopSection && shopSection.classList.contains('active')) {
+  console.log('[Shop] Section already active on load, loading products...');
+  loadPublicProducts();
 }
 
 // Initialize cart UI
