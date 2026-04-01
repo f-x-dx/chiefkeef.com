@@ -169,7 +169,7 @@
     color: var(--white);
     text-decoration: none;
     font-family: 'Space Mono', monospace;
-    font-size: 13px;
+    font-size: 25px;
     letter-spacing: 2.5px;
     text-transform: uppercase;
     transition: color 0.3s, text-shadow 0.3s, background 0.3s;
@@ -1278,7 +1278,7 @@
       display: block;
     }
     .nav-corner a {
-      font-size: 13px;
+      font-size: 25px;
       letter-spacing: 2px;
       padding: 6px 8px;
     }
@@ -1350,7 +1350,7 @@
     .vault-gate-sub { font-size: 12px; }
     /* Nav corners: reduce size on smallest screens */
     .nav-corner a {
-      font-size: 10px;
+      font-size: 22px;
       letter-spacing: 1px;
       padding: 4px 6px;
     }
@@ -1361,11 +1361,16 @@
       position: relative;
       height: auto;
       min-height: 0;
-      padding: 40px 20px 60px;
+      padding: 72px 20px 60px;
       justify-content: flex-start;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
       background: rgba(6, 4, 8, 0.98);
+    }
+    .vault-gate-overlay .token-coin {
+      width: 90px;
+      height: 90px;
+      font-size: 36px;
     }
   }
 
@@ -1661,21 +1666,21 @@
 
 <!-- Mobile Overlay -->
 <div class="mobile-overlay" id="mobileOverlay">
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('music')">Music</a>
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('shop')">Shop</a>
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('tour')">Tour</a>
-  <a href="javascript:void(0)" onclick="closeMobile(); navigateTo('vault')">Vault</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('music')">Music</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('shop')">Shop</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('tour')">Tour</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('vault')">Vault</a>
 </div>
 
 
 
 <!-- Navigation — 4 corners + centered wordmark -->
 <nav class="nav" id="mainNav">
-  <a href="javascript:void(0)" class="nav-wordmark" onclick="navigateTo('home')">Sosa</a>
-  <div class="nav-corner nav-corner--tl"><a href="javascript:void(0)" onclick="navigateTo('music')">Music</a></div>
-  <div class="nav-corner nav-corner--tr"><a href="javascript:void(0)" onclick="navigateTo('shop')">Shop</a></div>
-  <div class="nav-corner nav-corner--bl"><a href="javascript:void(0)" onclick="navigateTo('tour')">Tour</a></div>
-  <div class="nav-corner nav-corner--br"><a href="javascript:void(0)" onclick="navigateTo('vault')">Vault</a></div>
+  <a href="#" class="nav-wordmark" onclick="event.preventDefault(); navigateTo('home')">Sosa</a>
+  <div class="nav-corner nav-corner--tl"><a href="#" onclick="event.preventDefault(); navigateTo('music')">Music</a></div>
+  <div class="nav-corner nav-corner--tr"><a href="#" onclick="event.preventDefault(); navigateTo('shop')">Shop</a></div>
+  <div class="nav-corner nav-corner--bl"><a href="#" onclick="event.preventDefault(); navigateTo('tour')">Tour</a></div>
+  <div class="nav-corner nav-corner--br"><a href="#" onclick="event.preventDefault(); navigateTo('vault')">Vault</a></div>
   <button class="hamburger" id="hamburger" onclick="toggleMobile()">
     <span></span><span></span><span></span>
   </button>
@@ -1839,44 +1844,44 @@
   </div>
   <div class="vault-gate">
     <div class="vault-gate-overlay" id="vaultGate">
-      <div class="vault-lock-icon">
-        <svg class="vault-lock-svg" viewBox="0 0 24 24">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          <circle cx="12" cy="16" r="1.5" fill="var(--purple-bright)"/>
-        </svg>
+      <div class="token-coin">S</div>
+      <div class="token-ticker">$SOSA — Official Fan Token</div>
+      <div class="vault-gate-title">Sosa <span style="color:var(--purple-bright)">Coin</span></div>
+      <div class="vault-gate-sub" style="max-width:480px;line-height:1.6;letter-spacing:1px">
+        The official Chief Keef fan club token. Hold <span class="sol-accent">$SOSA</span> to unlock the vault — exclusive era photography, unreleased artwork, early merch drops, tour presales, and direct community perks. On-chain, forever.
       </div>
-      <div class="vault-gate-title">Holders Only</div>
-      <div class="vault-gate-sub">
-        Connect your <span class="sol-accent">Solana</span> wallet to unlock the vault — exclusive era photography, unreleased mixtape covers, and archive material
+
+      <div class="token-utility-grid" style="max-width:640px;margin:32px auto 0">
+        <div class="token-utility-card">
+          <span class="token-utility-icon">🔐</span>
+          <div class="token-utility-title">Vault Access</div>
+          <div class="token-utility-desc">Era photography, unreleased artwork, and archive material locked to $SOSA holders.</div>
+        </div>
+        <div class="token-utility-card">
+          <span class="token-utility-icon">👕</span>
+          <div class="token-utility-title">Merch Presale</div>
+          <div class="token-utility-desc">First access to every Skeletor and GBE drop. Holder-exclusive colorways.</div>
+        </div>
+        <div class="token-utility-card">
+          <span class="token-utility-icon">🎟</span>
+          <div class="token-utility-title">Tour Presale</div>
+          <div class="token-utility-desc">Priority ticket access before general on-sale.</div>
+        </div>
+        <div class="token-utility-card">
+          <span class="token-utility-icon">🎧</span>
+          <div class="token-utility-title">Unreleased Music</div>
+          <div class="token-utility-desc">Gated listening sessions and early access to new projects.</div>
+        </div>
       </div>
-      <div class="wallet-buttons">
-        <button class="wallet-btn" onclick="connectWallet('phantom')" id="btnPhantom">
-          <div class="wallet-btn-icon phantom">👻</div>
-          Phantom
-          <span class="wallet-status" id="statusPhantom">—</span>
-        </button>
-        <button class="wallet-btn" onclick="connectWallet('solflare')" id="btnSolflare">
-          <div class="wallet-btn-icon solflare">☀</div>
-          Solflare
-          <span class="wallet-status" id="statusSolflare">—</span>
-        </button>
-        <button class="wallet-btn" onclick="connectWallet('backpack')" id="btnBackpack">
-          <div class="wallet-btn-icon backpack">🎒</div>
-          Backpack
-          <span class="wallet-status" id="statusBackpack">—</span>
-        </button>
-        <div class="wallet-divider"><span>or</span></div>
-        <button class="wallet-btn" onclick="connectWallet('any')" id="btnAny">
-          <div class="wallet-btn-icon generic">🔗</div>
-          Any Solana Wallet
-          <span class="wallet-status">—</span>
-        </button>
+
+      <div class="token-coming-soon" style="margin-top:32px">— Launch TBA —</div>
+
+      <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;justify-content:center">
+        <button class="token-cta-btn" onclick="window.open('https://twitter.com/chiefkeef','_blank')">Follow for Launch</button>
+        <button class="token-cta-btn" style="background:transparent;border:1px solid rgba(196,77,255,0.3);color:var(--purple-bright)" onclick="bypassVault()">Preview Vault →</button>
       </div>
-      <div class="vault-gate-note">
-        Requires any Solana wallet. Token-gating optional.<br>
-        <a href="javascript:void(0)" onclick="bypassVault()">Demo access →</a>
-      </div>
+
+      <p class="token-disclaimer" style="margin-top:24px">$SOSA is a fan utility token. Not a financial instrument. Not investment advice. For community access and holder perks only.</p>
     </div>
     <div class="vault-grid locked" id="vaultGrid">
     <div class="vault-card reveal" style="--delay: 0.05s">
@@ -1939,96 +1944,7 @@
   </div>
 </section>
 
-<!-- ===== SOSA COIN ===== -->
-<section class="sosa-coin-section">
-
-  <div class="token-hero reveal">
-    <div class="token-coin">S</div>
-    <div class="token-ticker">$SOSA — Official Fan Token</div>
-    <h2 class="section-title" style="margin-bottom:0">Sosa <span class="accent">Coin</span></h2>
-    <p class="token-tagline">The official Chief Keef fan club token. Holders get exclusive access to vault content, early merch drops, tour presales, and direct community perks — on-chain, forever.</p>
-    <div class="token-coming-soon">— Launch TBA —</div>
-  </div>
-
-  <div class="token-utility-grid">
-    <div class="token-utility-card reveal" style="--delay:0.05s">
-      <span class="token-utility-icon">🔐</span>
-      <div class="token-utility-title">Vault Access</div>
-      <div class="token-utility-desc">Full access to The Vault — era photography, unreleased artwork, and archive material locked to $SOSA holders only.</div>
-    </div>
-    <div class="token-utility-card reveal" style="--delay:0.1s">
-      <span class="token-utility-icon">👕</span>
-      <div class="token-utility-title">Merch Presale</div>
-      <div class="token-utility-desc">First access to every Skeletor and GBE drop before it goes public. Holder-exclusive colorways and limited quantities.</div>
-    </div>
-    <div class="token-utility-card reveal" style="--delay:0.15s">
-      <span class="token-utility-icon">🎟</span>
-      <div class="token-utility-title">Tour Presale</div>
-      <div class="token-utility-desc">Priority ticket access for every Chief Keef tour date. Holder allocation secured before general on-sale.</div>
-    </div>
-    <div class="token-utility-card reveal" style="--delay:0.2s">
-      <span class="token-utility-icon">🎧</span>
-      <div class="token-utility-title">Unreleased Music</div>
-      <div class="token-utility-desc">Gated listening sessions, snippets, and early access to new projects direct from the camp — exclusive to the community.</div>
-    </div>
-    <div class="token-utility-card reveal" style="--delay:0.25s">
-      <span class="token-utility-icon">🤝</span>
-      <div class="token-utility-title">Meet & Greet</div>
-      <div class="token-utility-desc">Holder-only meet and greet allocations at select shows. On-chain verification at the door. No resale, no bots.</div>
-    </div>
-    <div class="token-utility-card reveal" style="--delay:0.3s">
-      <span class="token-utility-icon">🏆</span>
-      <div class="token-utility-title">GBE Community</div>
-      <div class="token-utility-desc">Access to the official Glory Boyz community — direct channel, votes on future drops, and fan council participation.</div>
-    </div>
-  </div>
-
-  <div class="reveal" style="--delay:0.1s">
-    <div class="token-omics-title">Tokenomics</div>
-    <table class="token-omics-table">
-      <tr>
-        <td>Token Name</td>
-        <td>Sosa Coin</td>
-      </tr>
-      <tr>
-        <td>Ticker</td>
-        <td>$SOSA</td>
-      </tr>
-      <tr>
-        <td>Chain</td>
-        <td>Solana</td>
-      </tr>
-      <tr>
-        <td>Total Supply</td>
-        <td><span class="tba">TBA</span></td>
-      </tr>
-      <tr>
-        <td>Contract</td>
-        <td><span class="tba">TBA — Pending Launch</span></td>
-      </tr>
-      <tr>
-        <td>Holder Utility</td>
-        <td>Vault · Merch · Tour · Music · IRL</td>
-      </tr>
-      <tr>
-        <td>Distribution</td>
-        <td><span class="tba">TBA</span></td>
-      </tr>
-      <tr>
-        <td>Status</td>
-        <td>Pre-Launch</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="token-cta reveal" style="--delay:0.15s">
-    <div class="token-cta-title">Join the <span class="accent">Movement</span></div>
-    <p class="token-cta-sub">Follow for launch details. GBE.</p>
-    <button class="token-cta-btn" onclick="window.open('https://twitter.com/chiefkeef','_blank')">Follow for Launch</button>
-    <p class="token-disclaimer">$SOSA is a fan utility token. Not a financial instrument. Not investment advice. For community access and holder perks only. Details subject to change prior to launch.</p>
-  </div>
-
-</section>
+<!-- Sosa Coin section is now integrated into the vault gate overlay above -->
 
 </div><!-- /page-vault -->
 
@@ -2074,7 +1990,11 @@ window.addEventListener('load', function(){(function(){
 
   // Three.js setup
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  // Mobile detection — multi-signal: UA, touch, viewport, coarse pointer.
+  // Arc mobile on iOS can spoof desktop UA, so UA alone is not reliable.
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent) ||
+    ('ontouchstart' in window && navigator.maxTouchPoints > 1 && window.innerWidth < 1024) ||
+    (window.matchMedia && window.matchMedia('(pointer: coarse)').matches && window.innerWidth < 1024);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
   renderer.setClearColor(0x060408, 1);
   renderer.setSize(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight);
@@ -2857,7 +2777,7 @@ window.addEventListener('load', function(){(function(){
 
   // Desktop: enhanced cursor tracking with depth parallax
   // Only block on mobile (touch-primary) devices, not desktop Chrome which may have DeviceOrientation
-  const isTouchDevice = ('ontouchstart' in window) && (navigator.maxTouchPoints >= 1);
+  const isTouchDevice = isMobile;
   document.addEventListener('mousemove', (e) => {
     if (isTouchDevice && isGyroActive) return;
     targetX = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -2915,18 +2835,29 @@ window.addEventListener('load', function(){(function(){
     initGyroscope();
   }
 
-  // iOS 13+: auto-request on first touch after loader is gone
+  // iOS 13+ / Arc mobile: auto-request gyro permission on first touch after loader is gone
   if (isTouchDevice && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
     document.addEventListener('touchstart', function requestGyroOnce() {
       // Don't interrupt the loader — wait until it's hidden
       const loader = document.getElementById('loader');
       if (loader && !loader.classList.contains('hidden')) return;
-      DeviceOrientationEvent.requestPermission().then(function(state) {
-        if (state === 'granted') {
-          isGyroActive = true;
+      try {
+        DeviceOrientationEvent.requestPermission().then(function(state) {
+          if (state === 'granted') {
+            isGyroActive = true;
+            window.addEventListener('deviceorientation', handleGyro, true);
+          }
+        }).catch(function(err) {
+          // Arc or other WebKit browser denied/failed — try attaching listener directly
+          console.warn('[chiefkeef] Gyro permission failed, trying direct attach:', err);
           window.addEventListener('deviceorientation', handleGyro, true);
-        }
-      }).catch(function() {});
+          setTimeout(function() { if (gyroBaseAlpha === null) isGyroActive = false; }, 1000);
+        });
+      } catch(err) {
+        // requestPermission threw synchronously (some Arc versions)
+        window.addEventListener('deviceorientation', handleGyro, true);
+        setTimeout(function() { if (gyroBaseAlpha === null) isGyroActive = false; }, 1000);
+      }
       document.removeEventListener('touchstart', requestGyroOnce);
     }, { once: false });
   }
@@ -3076,8 +3007,21 @@ window.addEventListener('load', function(){(function(){
     }
 
     if (composer) {
-      try { composer.render(); } catch(e) {
-        // Composer failed mid-session (context loss, GPU driver issue, etc.) — drop to direct
+      try {
+        composer.render();
+        // Safety: if render target is black after composer, nuke it and go direct.
+        // This catches the Arc mobile flicker-then-black scenario.
+        if (frameCount === 3) {
+          var px = new Uint8Array(4);
+          renderer.readRenderTargetPixels(composer.readBuffer, Math.floor(canvas.width/2), Math.floor(canvas.height/2), 1, 1, px);
+          if (px[0] === 0 && px[1] === 0 && px[2] === 0 && px[3] === 0) {
+            console.warn('[chiefkeef] Composer producing blank frames, falling back to direct render');
+            composer = null; bloomPass = null; combinedPass = null;
+            renderer.render(scene, camera);
+          }
+        }
+      } catch(e) {
+        // Composer failed mid-session (context loss, GPU driver issue, etc.)
         composer = null; bloomPass = null; combinedPass = null;
         renderer.render(scene, camera);
       }
@@ -3109,8 +3053,16 @@ window.addEventListener('load', function(){(function(){
   });
 
   // WebGL context loss/restore (iOS kills context on permission dialogs, backgrounding, etc.)
-  canvas.addEventListener('webglcontextlost', function(e) { e.preventDefault(); }, false);
-  canvas.addEventListener('webglcontextrestored', function() { renderer.resetState(); }, false);
+  // WebGL context loss/restore — kill composer, force clean direct render on restore.
+  canvas.addEventListener('webglcontextlost', function(e) {
+    e.preventDefault();
+    composer = null; bloomPass = null; combinedPass = null;
+  }, false);
+  canvas.addEventListener('webglcontextrestored', function() {
+    renderer.resetState();
+    renderer.setClearColor(0x060408, 1);
+    composer = null; bloomPass = null; combinedPass = null;
+  }, false);
 
   animate();
 })();});
