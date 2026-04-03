@@ -2149,7 +2149,7 @@
 <div class="mobile-overlay" id="mobileOverlay">
   <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('music')">Music</a>
   <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('shop')">Shop</a>
-  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('tour')">Tour</a>
+  <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('tour')">Video</a>
   <a href="#" onclick="event.preventDefault(); closeMobile(); navigateTo('vault')">Vault</a>
 </div>
 
@@ -2160,7 +2160,7 @@
   <a href="#" class="nav-wordmark" onclick="event.preventDefault(); navigateTo('home')">Sosa</a>
   <div class="nav-corner nav-corner--tl"><a href="#" onclick="event.preventDefault(); navigateTo('music')">Music</a></div>
   <div class="nav-corner nav-corner--tr"><a href="#" onclick="event.preventDefault(); navigateTo('shop')">Shop</a></div>
-  <div class="nav-corner nav-corner--bl"><a href="#" onclick="event.preventDefault(); navigateTo('tour')">Tour</a></div>
+  <div class="nav-corner nav-corner--bl"><a href="#" onclick="event.preventDefault(); navigateTo('tour')">Video</a></div>
   <div class="nav-corner nav-corner--br"><a href="#" onclick="event.preventDefault(); navigateTo('vault')">Vault</a></div>
   <button class="hamburger" id="hamburger" onclick="toggleMobile()">
     <span></span><span></span><span></span>
@@ -2255,59 +2255,10 @@
 </button>
 </div><!-- /page-shop -->
 
-<!-- ===== PAGE: TOUR ===== -->
-<div class="page" id="page-tour">
-<section class="section" id="tour">
-  <div class="reveal">
-    <div class="section-label">Live Shows</div>
-    <h2 class="section-title">Tour <span class="accent">Dates</span></h2>
-  </div>
-  <div class="tour-table reveal">
-    <div class="tour-row">
-      <div class="tour-date">MAR 14</div>
-      <div class="tour-venue">United Center <span class="city">Chicago, IL</span></div>
-      <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
-    </div>
-    <div class="tour-row">
-      <div class="tour-date">MAR 22</div>
-      <div class="tour-venue">Madison Square Garden <span class="city">New York, NY</span></div>
-      <div class="tour-status low">● Low Stock</div>
-      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
-    </div>
-    <div class="tour-row">
-      <div class="tour-date">APR 05</div>
-      <div class="tour-venue">The Forum <span class="city">Los Angeles, CA</span></div>
-      <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
-    </div>
-    <div class="tour-row">
-      <div class="tour-date">APR 12</div>
-      <div class="tour-venue">Toyota Center <span class="city">Houston, TX</span></div>
-      <div class="tour-status sold-out">● Sold Out</div>
-      <div class="tour-btn"><a href="#" onclick="event.preventDefault()" style="opacity:0.3;pointer-events:none;">Sold Out</a></div>
-    </div>
-    <div class="tour-row">
-      <div class="tour-date">APR 19</div>
-      <div class="tour-venue">State Farm Arena <span class="city">Atlanta, GA</span></div>
-      <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
-    </div>
-    <div class="tour-row">
-      <div class="tour-date">MAY 03</div>
-      <div class="tour-venue">Wembley Arena <span class="city">London, UK</span></div>
-      <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
-    </div>
-    <div class="tour-row">
-      <div class="tour-date">MAY 10</div>
-      <div class="tour-venue">Accor Arena <span class="city">Paris, FR</span></div>
-      <div class="tour-status low">● Low Stock</div>
-      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
-    </div>
-  </div>
-</section>
-</div><!-- /page-tour -->
+<!-- ===== PAGE: VIDEO ===== -->
+<div class="page page--hero" id="page-tour">
+  <iframe src="https://www.youtube.com/embed/2seS3W2VQ_Y?autoplay=0&rel=0&modestbranding=1&playsinline=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+</div><!-- /page-video -->
 
 <!-- ===== PAGE: VAULT ===== -->
 <div class="page" id="page-vault">
