@@ -558,7 +558,7 @@
 
   // ── Init ──
   const params = new URLSearchParams(window.location.search);
-  const id = params.get('id') || 'tee-skull-script';
+  const id = params.get('handle') || params.get('id') || 'tee-skull-script';
   const product = PRODUCTS[id];
 
   if (!product) {
@@ -659,7 +659,7 @@
   others.slice(0, 4).forEach(([key, p]) => {
     const a = document.createElement('a');
     a.className = 'related-card';
-    a.href = `product.html?id=${key}`;
+    a.href = `product.html?handle=${key}`;
     a.innerHTML = `
       <div class="related-card-img">
         <img src="${p.images[0].src}" alt="${p.name}">
