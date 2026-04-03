@@ -2267,43 +2267,43 @@
       <div class="tour-date">MAR 14</div>
       <div class="tour-venue">United Center <span class="city">Chicago, IL</span></div>
       <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#">Tickets</a></div>
+      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
     </div>
     <div class="tour-row">
       <div class="tour-date">MAR 22</div>
       <div class="tour-venue">Madison Square Garden <span class="city">New York, NY</span></div>
       <div class="tour-status low">● Low Stock</div>
-      <div class="tour-btn"><a href="#">Tickets</a></div>
+      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
     </div>
     <div class="tour-row">
       <div class="tour-date">APR 05</div>
       <div class="tour-venue">The Forum <span class="city">Los Angeles, CA</span></div>
       <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#">Tickets</a></div>
+      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
     </div>
     <div class="tour-row">
       <div class="tour-date">APR 12</div>
       <div class="tour-venue">Toyota Center <span class="city">Houston, TX</span></div>
       <div class="tour-status sold-out">● Sold Out</div>
-      <div class="tour-btn"><a href="#" style="opacity:0.3;pointer-events:none;">Sold Out</a></div>
+      <div class="tour-btn"><a href="#" onclick="event.preventDefault()" style="opacity:0.3;pointer-events:none;">Sold Out</a></div>
     </div>
     <div class="tour-row">
       <div class="tour-date">APR 19</div>
       <div class="tour-venue">State Farm Arena <span class="city">Atlanta, GA</span></div>
       <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#">Tickets</a></div>
+      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
     </div>
     <div class="tour-row">
       <div class="tour-date">MAY 03</div>
       <div class="tour-venue">Wembley Arena <span class="city">London, UK</span></div>
       <div class="tour-status available">● Available</div>
-      <div class="tour-btn"><a href="#">Tickets</a></div>
+      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
     </div>
     <div class="tour-row">
       <div class="tour-date">MAY 10</div>
       <div class="tour-venue">Accor Arena <span class="city">Paris, FR</span></div>
       <div class="tour-status low">● Low Stock</div>
-      <div class="tour-btn"><a href="#">Tickets</a></div>
+      <div class="tour-btn"><a href="#" onclick="event.preventDefault()">Tickets</a></div>
     </div>
   </div>
 </section>
@@ -2537,8 +2537,8 @@
     </ul>
     <div class="footer-drawer-legal">
       <div class="footer-drawer-legal-links">
-        <a href="#">Terms of Service</a>
-        <a href="#">Privacy Policy</a>
+        <a href="#" onclick="event.preventDefault()">Terms of Service</a>
+        <a href="#" onclick="event.preventDefault()">Privacy Policy</a>
       </div>
       <div class="footer-drawer-copy">© 2026 CHIEF SOSA / GBE — ALL RIGHTS RESERVED</div>
     </div>
@@ -3954,10 +3954,11 @@ function navigateTo(page) {
   currentPage = page;
 }
 
-// Handle browser back/forward
+// Handle browser back/forward — only navigate on real hash routes
 window.addEventListener('hashchange', () => {
-  const hash = window.location.hash.replace('#/', '').replace('#', '') || 'home';
-  navigateTo(hash);
+  const raw = window.location.hash.replace('#/', '').replace('#', '');
+  if (!raw) return; // ignore bare "#" clicks — prevents involuntary home jumps
+  navigateTo(raw);
 });
 
 // Check initial hash
